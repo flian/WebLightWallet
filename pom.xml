@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.lotus.webwallet</groupId>
+  <artifactId>webwallet-parent</artifactId>
+  <version>1.11.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <webwallet.version>1.11.1-SNAPSHOT</webwallet.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <modules>
+    <module>base</module>
+    <module>infinitecoin</module>
+    <module>dogmcoin</module>
+    <module>admin</module>
+    <module>bbs</module>
+    <module>web</module>
+  </modules>
+
+
+  <name>web light wallet</name>
+  <description>a light wallet for java</description>
+  <url>https://github.com/flian/WebLightWallet</url>
+
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <mailingLists>
+  </mailingLists>
+
+  <!-- Common build plugin configuration -->
+  <build>
+    <plugins>
+    </plugins>
+  </build>
+
+</project>
