@@ -21,5 +21,9 @@
             <artifactId>base</artifactId>
             <version>${webwallet.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>infinitecoinj</artifactId>
+        </dependency>
     </dependencies>
 </project>
