@@ -14,5 +14,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <webwallet.version>1.11.1-SNAPSHOT</webwallet.version>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
 </project>
