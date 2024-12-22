@@ -15,4 +15,11 @@
         <webwallet.version>1.11.1-SNAPSHOT</webwallet.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.lotus.webwallet</groupId>
+            <artifactId>base</artifactId>
+            <version>${webwallet.version}</version>
+        </dependency>
+    </dependencies>
 </project>
