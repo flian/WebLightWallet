@@ -114,6 +114,12 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
             throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);
         }
         Wallet result = null;
+        if(walletKeyHashSet.contains(walletKey)){
+            result = customerWallets.stream().filter(w->w.getWalletKey().equals(walletKey)).findFirst().orElse(null).getWallet();
+        }
+        if(null != result){
+            return result;
+        }
         if(useSingleBlockChainIfo){
             try{
                 IfcWalletAndChainData newWalletData = new IfcWalletAndChainData();
@@ -363,8 +369,15 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
         try {
             vPeerGroup.stopAndWait();
             vMainWallet.saveToFile(vWalletFile);
+            customerWallets.stream().forEach(customerWalletData ->{
+                try {
+                    customerWalletData.getWallet().saveToFile(customerWalletData.getVWalletFile());
+                    customerWalletData.setWallet(null);
+                } catch (IOException e) {
+                    log.error("save wallet fail.",e);
+                }
+            });
             vMainStore.close();
-
             vPeerGroup = null;
             vMainWallet = null;
             vMainStore = null;

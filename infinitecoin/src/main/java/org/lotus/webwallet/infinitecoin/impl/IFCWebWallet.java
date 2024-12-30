@@ -198,7 +198,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public String netInfo() {
-        return ifcNet;
+    public String netInfo(SupportedCoins coin) {
+        return supportCoin(coin)?ifcNet:null;
     }
 }

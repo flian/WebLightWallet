@@ -26,7 +26,7 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount) {
+    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount,String base58ChangeAddress) {
         throw new UnsupportedOperationException();
     }
 
@@ -38,5 +38,10 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     @Override
     public boolean supportCoin(SupportedCoins coin) {
         return true;
+    }
+
+    @Override
+    public String netInfo(SupportedCoins coins) {
+        throw new UnsupportedOperationException();
     }
 }

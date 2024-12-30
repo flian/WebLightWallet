@@ -107,6 +107,11 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
         return webWalletApi.supportCoin(coin);
     }
 
+    @Override
+    public String netInfo(SupportedCoins coins) {
+        return getWebWalletByCoin(coins.name()).netInfo(coins);
+    }
+
     @Autowired
     public void setWebWalletsMap(Map<String, WebWalletApi> maps) {
         this.webWalletsMap = maps;

@@ -58,8 +58,9 @@ public interface WebWalletApi {
     boolean supportCoin(SupportedCoins coin);
 
     /**
+     * @param coins current coins
      * current net info
      * @return net info
      */
-    public String netInfo();
+     String netInfo(SupportedCoins coins);
 }
