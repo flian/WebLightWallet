@@ -70,7 +70,7 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount) {
+    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount,String base58ChangeAddress) {
         if (null == baseRequest.getCoin()) {
             throw new IllegalArgumentException("coin is required");
         }
@@ -86,7 +86,7 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
             throw new IllegalArgumentException("amount is empty or invalid.");
         }
         WebWalletApi webWalletApi = getWebWalletByCoin(baseRequest.getCoin().name());
-        return webWalletApi.transferToAddress(baseRequest, base58ToAddress, amount);
+        return webWalletApi.transferToAddress(baseRequest, base58ToAddress, amount,base58ChangeAddress);
     }
 
     @Override

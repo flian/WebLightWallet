@@ -6,5 +6,7 @@ package org.lotus.webwallet.base.api.dto;
  **/
 public enum WalletOpResultEnum {
     SUCCESS,
-    FAIL
+    FAIL,
+    WALLET_PASSWORD_FAIL,
+    NOT_SUFFICIENT_FUNDS
 }

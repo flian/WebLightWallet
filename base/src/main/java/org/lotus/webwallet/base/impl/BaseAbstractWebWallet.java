@@ -8,4 +8,5 @@ import org.lotus.webwallet.base.api.WebWalletApi;
  **/
 public abstract class BaseAbstractWebWallet implements WebWalletApi {
 
+
 }

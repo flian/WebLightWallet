@@ -23,6 +23,7 @@ public interface WebWalletApi {
      */
     WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request);
 
+
     /**
      * get a public address for account
      * @param baseRequest wallet info
@@ -35,9 +36,11 @@ public interface WebWalletApi {
      * @param baseRequest request info
      * @param base58ToAddress address
      * @param amount amount
+     * @param base58ChangeAddress change address
      * @return transfer result
+     *
      */
-    WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress,BigDecimal amount);
+    WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress,BigDecimal amount,String base58ChangeAddress);
 
     /**
      * is given address are correctly for coin
@@ -53,4 +56,10 @@ public interface WebWalletApi {
      * @return true if we can process
      */
     boolean supportCoin(SupportedCoins coin);
+
+    /**
+     * current net info
+     * @return net info
+     */
+    public String netInfo();
 }

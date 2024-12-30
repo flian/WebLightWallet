@@ -20,6 +20,11 @@ public class WalletBaseResult {
     private BigDecimal balance;
 
     /**
+     * batter balance value for hum
+     */
+    private String balanceBetterShowValue;
+
+    /**
      * wallet primary key
      */
     private String walletKey;
