@@ -1,0 +1,30 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  banner:
+    location: ["classpath:banner.txt", "file:./banner.txt"]
+  freemarker:
+    suffix: .ftl
+    cache: false
+    settings:
+      template_exception_handler: rethrow
+      number_format: 0.##
+    template-loader-path: ["classpath:/templates/", "file:./templates/"]
+  messages:
+    basename: i18n/message
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+
+#  resources:
+#    static-locations: ["classpath:static/", "file:./static/"]
+
+# 配置mapper.xml位置，这个位置可以在pom.xml里配置
+mybatis-plus:
+  mapper-locations: classpath:/*Mapper.xml
+  global-config:
+    banner: false

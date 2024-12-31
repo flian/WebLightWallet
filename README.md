@@ -61,3 +61,9 @@ gen new blockchain:
 ./infinitecoin-cli -regtest -rpcuser=test -rpcpassword=abcd11111 generatetoaddress 10 mgcDiBPwhboxyaWaqCWYHiugd1AjaMM2Pj
 
 ./infinitecoin-cli -regtest -rpcuser=test -rpcpassword=abcd11111 generatetoaddress 6 "mgcDiBPwhboxyaWaqCWYHiugd1AjaMM2Pj"
+
+
+
+### bbs
+
+bbs change from pybbs see:[original pybbs](https://github.com/atjiu/pybbs)
