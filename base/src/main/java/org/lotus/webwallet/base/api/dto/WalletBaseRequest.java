@@ -1,5 +1,6 @@
 package org.lotus.webwallet.base.api.dto;
 
+
 import lombok.Data;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 

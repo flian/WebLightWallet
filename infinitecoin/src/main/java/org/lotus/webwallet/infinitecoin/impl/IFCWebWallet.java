@@ -1,7 +1,7 @@
 package org.lotus.webwallet.infinitecoin.impl;
 
 import com.google.infinitecoinj.core.*;
-import com.google.infinitecoinj.kits.WalletAppKit;
+
 import com.google.infinitecoinj.params.MainNetParams;
 import com.google.infinitecoinj.params.RegTestParams;
 import com.google.infinitecoinj.params.TestNet3Params;
@@ -17,11 +17,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
+
 
 import static com.google.infinitecoinj.core.CoinDefinition.DUST_LIMIT;
 
@@ -83,6 +84,9 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     @Override
     public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
         if(supportCoin(request.getCoin())){
+            if(ObjectUtils.isEmpty(request.getAccountPrimaryKey())){
+               return WalletOpResult.fail("accountPrimaryKey is not allow empty.");
+            }
             String walletKey = ObjectUtils.isEmpty(request.getPreferWalletKey())?request.getAccountPrimaryKey():String.format("%s_%s",request.getAccountPrimaryKey(),request.getPreferWalletKey());
             Wallet wallet = getWalletByKey(walletKey,request.getPassword());
             WalletBaseResult baseResult = genCommonResult(walletKey,wallet);
@@ -115,7 +119,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public String getAddress(WalletBaseRequest baseRequest) {
+    public String getAddress( WalletBaseRequest baseRequest) {
         if(supportCoin(baseRequest.getCoin())){
             Wallet wallet = getWalletByKey(baseRequest.getAccountPrimaryKey(),baseRequest.getPassword());
             return wallet.getChangeAddress().toString();
@@ -142,14 +146,17 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
                 log.error("wallet password fail");
                 return WalletOpResult.fail(WalletOpResultEnum.WALLET_PASSWORD_FAIL,String.format("not sufficient funds,balance:%s,transfer amount:%s",balance,amount));
             }
+        }else {
+            log.info("not support or not valid coin, return.");
+            return WalletOpResult.fail(WalletOpResultEnum.NOT_SUPPORT_COIN,String.format("not support coin:%s or invalid address:%s.",baseRequest.getCoin(),base58ToAddress));
         }
 
         try {
             Address destination  = new Address(infiniteCoinMainKit.params, base58ToAddress);
             Wallet.SendRequest req = Wallet.SendRequest.to(destination,Utils.toNanoCoins(amount.toString()));
             //set fee and fee perKb to 1
-            req.fee = Utils.toNanoCoins("1");
-            req.feePerKb = Utils.toNanoCoins("1");
+            req.fee = DEFAULT_FEE;
+            req.feePerKb = DEFAULT_FEE_PER_KB;
             req.emptyWallet = false;
             Address changeAddress = wallet.getChangeAddress();
             if(valid2Address(base58ChangeAddress,baseRequest.getCoin())){

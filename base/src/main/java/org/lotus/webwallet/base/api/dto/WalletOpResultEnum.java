@@ -8,5 +8,6 @@ public enum WalletOpResultEnum {
     SUCCESS,
     FAIL,
     WALLET_PASSWORD_FAIL,
-    NOT_SUFFICIENT_FUNDS
+    NOT_SUFFICIENT_FUNDS,
+    NOT_SUPPORT_COIN
 }
