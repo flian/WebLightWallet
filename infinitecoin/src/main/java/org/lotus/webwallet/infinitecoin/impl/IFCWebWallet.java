@@ -35,8 +35,8 @@ import static com.google.infinitecoinj.core.CoinDefinition.DUST_LIMIT;
 @Setter
 @Service(value = Constants.INFINITE_COIN)
 public class IFCWebWallet extends BaseAbstractWebWallet {
-    @Resource
-    private WebWalletFileConfigProperties webWalletFileConfigProperties;
+
+    private final WebWalletFileConfigProperties webWalletFileConfigProperties;
 
     public static final String REG_TEST_NET = "regtest";
     private static final String TEST_NET = "test";
@@ -55,7 +55,9 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     public IFCWebWallet(@Value("${web.wallet.ifc.net:regtest}") String net,
                         @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost,
                         @Value("${web.wallet.ifc.minFee:1}") String minFee,
-                        @Value("${web.wallet.ifc.minFeePerKb:1}") String minFeePerKb){
+                        @Value("${web.wallet.ifc.minFeePerKb:1}") String minFeePerKb,
+                        WebWalletFileConfigProperties webWalletFileConfigProperties){
+        this.webWalletFileConfigProperties = webWalletFileConfigProperties;
         this.ifcNet = net;
         DEFAULT_FEE = Utils.toNanoCoins(minFee);
         DEFAULT_FEE_PER_KB =  Utils.toNanoCoins(minFeePerKb);
