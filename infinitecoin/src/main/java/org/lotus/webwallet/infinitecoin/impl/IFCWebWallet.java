@@ -41,9 +41,10 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     public static final String REG_TEST_NET = "regtest";
     private static final String TEST_NET = "test";
     private static final String MAIN_WALLET_NAME_PREFIX = "IFC_MAIN";
+
     //default fee and fee per kb to 1 IFC
-    private BigInteger DEFAULT_FEE = Utils.toNanoCoins("1");
-    private BigInteger DEFAULT_FEE_PER_KB =  Utils.toNanoCoins("1");
+    private  final BigInteger DEFAULT_FEE;
+    private  final  BigInteger DEFAULT_FEE_PER_KB;
 
     private  String regtestHost = "127.0.0.1";
 
@@ -52,8 +53,12 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     protected final NetworkParameters networkParameters;
     protected final IfcMultiWalletAppKit infiniteCoinMainKit;
     public IFCWebWallet(@Value("${web.wallet.ifc.net:regtest}") String net,
-                        @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost){
+                        @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost,
+                        @Value("${web.wallet.ifc.minFee:1}") String minFee,
+                        @Value("${web.wallet.ifc.minFeePerKb:1}") String minFeePerKb){
         this.ifcNet = net;
+        DEFAULT_FEE = Utils.toNanoCoins(minFee);
+        DEFAULT_FEE_PER_KB =  Utils.toNanoCoins(minFeePerKb);
         if(REG_TEST_NET.equals(ifcNet)){
             //TODO default reg test net
             networkParameters = RegTestParams.get();
