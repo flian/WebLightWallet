@@ -262,7 +262,7 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
     protected void startUp() throws Exception {
         // Runs in a separate thread.
         if (!directory.exists()) {
-            if (!directory.mkdir()) {
+            if (!directory.mkdirs()) {
                 throw new IOException("Could not create named directory.");
             }
         }

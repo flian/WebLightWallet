@@ -39,12 +39,13 @@ public class WebWalletFileConfigProperties {
 
     protected String initDefaultPath() {
         String os = System.getProperty("os.name").toLowerCase();
+        String user = System.getProperty("user.name");
         if(os.contains("win")){
             return "D:/web_wallet";
         }else if(os.contains("nix") || os.contains("nux") || os.contains("aix")){
-            return "/home/web_wallet";
+            return String.format("/home/%s/web_wallet",user);
         }else if(os.contains("mac")){
-            return "~/web_wallet";
+            return String.format("/Users/%s/web_wallet",user);
         }
         throw new RuntimeException("unknown system."+os);
     }
