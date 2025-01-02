@@ -8,6 +8,8 @@ CREATE TABLE `user_wallet`
     `balance`       decimal(40, 10)       default 0,
     `locked_amount` decimal(40, 10)       default 0,
     `primary_address` varchar(255) NOT NULL,
+    `encrypted_password`     varchar(255) DEFAULT '',
+    `encrypted_pub_idx_key ` varchar(255) DEFAULT '',
     UNIQUE KEY `wallet_key_unk` (`wallet_key`),
     UNIQUE KEY `user_name_coin_wallet_unk` (`username`,`coin_symbol`)
 )
