@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PybbsApplicationTests {
+public class WebWalletApplicationTests {
 
     @Resource
     ElasticSearchService elasticSearchService;
