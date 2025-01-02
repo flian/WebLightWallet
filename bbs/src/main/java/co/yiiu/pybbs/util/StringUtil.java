@@ -189,4 +189,7 @@ public class StringUtil {
         return str;
     }
 
+    public static String randUUidStr(){
+        return UUID.randomUUID().toString().replaceAll("-","");
+    }
 }

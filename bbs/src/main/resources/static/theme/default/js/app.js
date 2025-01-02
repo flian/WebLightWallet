@@ -10,6 +10,12 @@ function tip(msg) {
     layer.msg(msg, {offset: 't'});
 }
 
+function RSAEncrypt(pubKey,data){
+     let encrypt = new JSEncrypt();
+     encrypt.setPublicKey(pubKey);
+     return encrypt.encrypt(data);
+}
+
 function req(method, url, body, token, cb) {
     let setup = {
         cache: false,
