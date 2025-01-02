@@ -1,5 +1,6 @@
 
-DROP TABLE IF EXISTS `user_wallet`
+DROP TABLE IF EXISTS `user_wallet`;
+
 CREATE TABLE `user_wallet`
 (
     `id`            int(11) NOT NULL AUTO_INCREMENT,
@@ -14,9 +15,10 @@ CREATE TABLE `user_wallet`
     PRIMARY KEY (`id`),
     UNIQUE KEY `wallet_key_unk` (`wallet_key`),
     UNIQUE KEY `user_name_coin_wallet_unk` (`username`,`coin_symbol`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `user_coin_address`
+DROP TABLE IF EXISTS `user_coin_address`;
+
 CREATE TABLE `user_coin_address`
 (
     `id`            int(11) NOT NULL AUTO_INCREMENT,
@@ -26,7 +28,8 @@ CREATE TABLE `user_coin_address`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `rsa_private_pub_key`
+DROP TABLE IF EXISTS `rsa_private_pub_key`;
+
 CREATE TABLE `rsa_private_pub_key`
 (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -35,4 +38,4 @@ CREATE TABLE `rsa_private_pub_key`
     `idx_key` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `keys_idx_key_unk` (`idx_key`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
