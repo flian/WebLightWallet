@@ -1,5 +1,5 @@
 
-DROP TABLE IF EXISTS `user_wallet`;
+
 
 CREATE TABLE `user_wallet`
 (
@@ -17,7 +17,7 @@ CREATE TABLE `user_wallet`
     UNIQUE KEY `user_name_coin_wallet_unk` (`username`,`coin_symbol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `user_coin_address`;
+
 
 CREATE TABLE `user_coin_address`
 (
@@ -28,7 +28,7 @@ CREATE TABLE `user_coin_address`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `rsa_private_pub_key`;
+
 
 CREATE TABLE `rsa_private_pub_key`
 (

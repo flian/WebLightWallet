@@ -15,4 +15,4 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 spring:
   flyway:
-    enabled: false
+    enabled: true
