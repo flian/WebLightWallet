@@ -10,8 +10,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @SpringBootApplication(scanBasePackages = {"org.lotus.webwallet","co.yiiu.pybbs"},
         exclude = {DataSourceAutoConfiguration.class, FlywayAutoConfiguration.class})
 @EnableAspectJAutoProxy
-public class WebWalletApplication {
+public class WebWalletBBSApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WebWalletApplication.class, args);
+        SpringApplication.run(WebWalletBBSApplication.class, args);
     }
 }
