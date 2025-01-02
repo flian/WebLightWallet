@@ -18,7 +18,9 @@ spring:
     multipart:
       max-file-size: -1
       max-request-size: -1
-
+  #default disable flyway
+  flyway:
+    enabled: false
 
 #  resources:
 #    static-locations: ["classpath:static/", "file:./static/"]
