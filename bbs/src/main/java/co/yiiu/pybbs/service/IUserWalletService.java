@@ -1,18 +1,19 @@
 package co.yiiu.pybbs.service;
 
-import co.yiiu.pybbs.model.RsaPrivatePubKey;
+
 import co.yiiu.pybbs.model.User;
+import co.yiiu.pybbs.model.UserWallet;
 import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
 import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
-
-import java.security.NoSuchAlgorithmException;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
 
 /**
  * @author : foy
  * @date : 2025/1/2:20:50
  **/
-public interface UserWalletService {
+public interface IUserWalletService {
     /**
      * generate rsa pub and private key for using.
      * @param count how many keys to generate and save in db
@@ -28,12 +29,28 @@ public interface UserWalletService {
     RsaPubKeyInfoForFrontDto pickOneRsaPubKey(String preferKey);
 
     /**
+     * query suer wallet info
+     * @param username username
+     * @param coins coin
+     * @return wallet info
+     */
+    UserWallet selectUserWalletByUserAndCoin(String username, SupportedCoins coins);
+
+    /**
      * init or change password for given user and wallet
      * @param user user for init wallet
      * @param requestDto wallet request
      * @return true if success
      */
     boolean initForUserWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto);
+
+    /**
+     * transfer coin from user to others
+     * @param user user
+     * @param transferCoinRequestDto transaction info
+     * @return true if success
+     */
+    boolean transferCoin(User user,TransferCoinRequestDto transferCoinRequestDto);
 
     /**
      * change user wallet password

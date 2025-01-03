@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author : foy
@@ -26,4 +27,11 @@ public class UserWallet implements Serializable {
     private String encryptedPassword;
     private String pubIdxKey;
     private boolean savedWalletPassword;
+
+    public double getAvailableAmount(){
+        if(null != balance && null != lockedAmount){
+            return balance.subtract(lockedAmount).setScale(2, RoundingMode.DOWN).doubleValue();
+        }
+        return 0.0;
+    }
 }

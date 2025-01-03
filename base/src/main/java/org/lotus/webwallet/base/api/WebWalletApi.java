@@ -51,7 +51,7 @@ public interface WebWalletApi {
      * @param baseRequest request info
      * @param base58ToAddress address
      * @param amount amount
-     * @param base58ChangeAddress change address
+     * @param base58ChangeAddress optional change address
      * @return transfer result
      *
      */

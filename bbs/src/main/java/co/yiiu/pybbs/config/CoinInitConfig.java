@@ -1,6 +1,6 @@
 package co.yiiu.pybbs.config;
 
-import co.yiiu.pybbs.service.UserWalletService;
+import co.yiiu.pybbs.service.IUserWalletService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @Slf4j
 public class CoinInitConfig {
     @Resource
-    private UserWalletService userWalletService;
+    private IUserWalletService userWalletService;
 
     @Value("${spring.webwallet.coin.rsa.enabled:false}")
     private boolean initRsaKeys;

@@ -5,8 +5,9 @@ import co.yiiu.pybbs.mapper.UserWalletMapper;
 import co.yiiu.pybbs.model.RsaPrivatePubKey;
 import co.yiiu.pybbs.model.User;
 import co.yiiu.pybbs.model.UserWallet;
-import co.yiiu.pybbs.service.UserWalletService;
+import co.yiiu.pybbs.service.IUserWalletService;
 import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
+import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
 import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
 import co.yiiu.pybbs.util.StringUtil;
@@ -16,6 +17,7 @@ import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import javax.crypto.BadPaddingException;
@@ -44,7 +46,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UserWalletServiceImpl implements UserWalletService {
+public class UserWalletService implements IUserWalletService {
     protected static final String WALLET_ENCRYPTED_METHOD_KEY = "RSA";
     protected static final int DEFAULT_RSA_KEY_SIZE = 2048;
 
@@ -97,10 +99,16 @@ public class UserWalletServiceImpl implements UserWalletService {
         return result;
     }
 
+    @Override
+    public UserWallet selectUserWalletByUserAndCoin(String username, SupportedCoins coins) {
+        return userWalletMapper.selectUserWalletByUserAndCoin(username,coins.name());
+    }
+
+
 
     @Override
     public boolean initForUserWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto) {
-        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol());
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol().name());
         if(null != userWallet){
             log.error("user already have  wallet for coin.user:{},coinSymbol:{},walletKey:{}",
                     user.getUsername(),requestDto.getCoinSymbol(),userWallet.getWalletKey());
@@ -109,10 +117,10 @@ public class UserWalletServiceImpl implements UserWalletService {
         RsaPrivatePubKey key = rsaPrivatePubKeyMapper.selectByPubIdxKey(requestDto.getPubIdxKey());
         try {
             String password = deCryptText(requestDto.getEncryptedPassword(),key.getPrivateKey());
-            String walletKey = genWalletKeyForUser(user, requestDto.getCoinSymbol());
+            String walletKey = genWalletKeyForUser(user, requestDto.getCoinSymbol().name());
             userWallet = new UserWallet();
             userWallet.setUsername(userWallet.getUsername());
-            userWallet.setCoinSymbol(requestDto.getCoinSymbol());
+            userWallet.setCoinSymbol(requestDto.getCoinSymbol().name());
             userWallet.setWalletKey(walletKey);
             if(requestDto.isSaveEncryptedPasswordForThisWallet()){
                 userWallet.setEncryptedPassword(requestDto.getEncryptedPassword());
@@ -125,7 +133,7 @@ public class UserWalletServiceImpl implements UserWalletService {
             //try create a wallet
             EnsureWalletRequest ensureWalletRequest = new EnsureWalletRequest();
             ensureWalletRequest.setAccountPrimaryKey(walletKey);
-            ensureWalletRequest.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol()));
+            ensureWalletRequest.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol().name()));
             ensureWalletRequest.setPassword(password);
             WalletOpResult<EnsureWalletResult> walletInfo = webWalletStrategy.ensureWallet(ensureWalletRequest);
             if(walletInfo.isOk()){
@@ -137,6 +145,32 @@ public class UserWalletServiceImpl implements UserWalletService {
             log.error("error create user wallet.user:{},coinSymbol:{}",user.getUsername(),requestDto.getCoinSymbol(),e);
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean transferCoin(User user, TransferCoinRequestDto transferCoinRequestDto) {
+        RsaPrivatePubKey rsaKey = rsaPrivatePubKeyMapper.selectByPubIdxKey(transferCoinRequestDto.getPubIdxKey());
+        SupportedCoins currentCoin = transferCoinRequestDto.getCoins();
+        try {
+            String password = deCryptText(transferCoinRequestDto.getEncryptedPassword(),rsaKey.getPrivateKey());
+            String toAddress = transferCoinRequestDto.getToAddress();
+            if(ObjectUtils.isEmpty(toAddress)){
+                UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(transferCoinRequestDto.getToUser().getUsername(),currentCoin.name());
+                toAddress = userWallet.getPrimaryAddress();
+            }
+            UserWallet fromWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),transferCoinRequestDto.getCoins().name());
+            WalletBaseRequest baseRequest = new WalletBaseRequest();
+            baseRequest.setAccountPrimaryKey(fromWallet.getWalletKey());
+            baseRequest.setCoin(currentCoin);
+            baseRequest.setPassword(password);
+            WalletOpResult<TransferResult> transferResult = webWalletStrategy.transferToAddress(baseRequest,toAddress,BigDecimal.valueOf(transferCoinRequestDto.getAmount()),fromWallet.getPrimaryAddress());
+            if(transferResult.isOk()){
+                return true;
+            }
+        } catch (Exception e) {
+           log.error("error transfer coin.");
+        }
         return false;
     }
 
@@ -185,7 +219,7 @@ public class UserWalletServiceImpl implements UserWalletService {
 
     @Override
     public boolean checkPasswordForWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto) {
-        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol());
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol().name());
         if(null == userWallet){
             log.error("user wallet is not created.user:{},coin:{}",user.getUsername(),requestDto.getCoinSymbol());
             return false;
@@ -195,7 +229,7 @@ public class UserWalletServiceImpl implements UserWalletService {
             String decryptedPassword = deCryptText(requestDto.getEncryptedPassword(),rsaKey.getPrivateKey());
             String walletKey = userWallet.getWalletKey();
             WalletBaseRequest request = new WalletBaseRequest();
-            request.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol()));
+            request.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol().name()));
             request.setPassword(decryptedPassword);
             request.setAccountPrimaryKey(walletKey);
             WalletOpResult<Boolean> result = webWalletStrategy.checkWalletPassword(request);
