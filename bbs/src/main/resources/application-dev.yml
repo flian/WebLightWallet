@@ -5,6 +5,8 @@ site:
   datasource_password: Admin123
 web:
   wallet:
+    rsa:
+      enabled: true
     ifc:
       #regtest net node ip
       regtestHost: 192.168.2.7

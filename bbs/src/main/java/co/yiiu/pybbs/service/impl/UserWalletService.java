@@ -61,7 +61,7 @@ public class UserWalletService implements IUserWalletService {
     @Resource
     private WebWalletStrategy webWalletStrategy;
 
-    @Value("${spring.webwallet.coin.rsa.defaultMaxSize:10000}")
+    @Value("${web.wallet.rsa.defaultMaxSize:10000}")
     private int maxKeySize;
     @Override
     public boolean genAndSavePrivateKeys(int count) {
