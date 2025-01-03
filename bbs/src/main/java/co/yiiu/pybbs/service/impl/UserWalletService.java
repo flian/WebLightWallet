@@ -52,6 +52,8 @@ public class UserWalletService implements IUserWalletService {
     protected static final String WALLET_ENCRYPTED_METHOD_KEY = "RSA";
     protected static final int DEFAULT_RSA_KEY_SIZE = 2048;
 
+    private static KeyPairGenerator RSA_GENERATEOR = null;
+
     @Resource
     private RsaPrivatePubKeyMapper rsaPrivatePubKeyMapper;
 
@@ -61,7 +63,7 @@ public class UserWalletService implements IUserWalletService {
     @Resource
     private WebWalletStrategy webWalletStrategy;
 
-    @Value("${web.wallet.rsa.defaultMaxSize:10000}")
+    @Value("${web.wallet.rsa.defaultMaxSize:1000}")
     private int maxKeySize;
     @Override
     public boolean genAndSavePrivateKeys(int count) {
@@ -272,9 +274,13 @@ public class UserWalletService implements IUserWalletService {
     }
 
     protected KeyPair generateRSAKeyPair(int keySize) throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(WALLET_ENCRYPTED_METHOD_KEY);
-        generator.initialize(keySize);
-        return generator.generateKeyPair();
+        if(null == RSA_GENERATEOR){
+            synchronized (UserWalletService.class){
+                RSA_GENERATEOR = KeyPairGenerator.getInstance(WALLET_ENCRYPTED_METHOD_KEY);
+                RSA_GENERATEOR.initialize(keySize);
+            }
+        }
+        return RSA_GENERATEOR.generateKeyPair();
     }
 
 }

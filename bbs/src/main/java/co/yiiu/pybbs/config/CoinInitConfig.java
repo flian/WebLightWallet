@@ -24,7 +24,7 @@ public class CoinInitConfig {
     @Value("${web.wallet.rsa.enabled:false}")
     private boolean initRsaKeys;
 
-    @Value("${web.wallet.rsa.initSize:1000}")
+    @Value("${web.wallet.rsa.initSize:10}")
     private int initSize;
     @PostConstruct
     public void initRsaKeys() {

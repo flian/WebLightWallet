@@ -9,7 +9,7 @@ web:
       enabled: true
     ifc:
       #regtest net node ip
-      regtestHost: 192.168.2.7
+      regtestHost: 192.168.1.14
 
 # 想看mybatis执行的sql的时候，去掉下面这段的注释
 mybatis-plus:
