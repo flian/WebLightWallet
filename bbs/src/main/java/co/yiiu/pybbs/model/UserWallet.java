@@ -24,5 +24,6 @@ public class UserWallet implements Serializable {
     private BigDecimal lockedAmount;
     private String primaryAddress;
     private String encryptedPassword;
-    private String encryptedPubIdxKey;
+    private String pubIdxKey;
+    private boolean savedWalletPassword;
 }

@@ -70,6 +70,36 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
     }
 
     @Override
+    public WalletOpResult<Boolean> checkWalletPassword(WalletBaseRequest request) {
+        if (null == request.getCoin()) {
+            throw new IllegalArgumentException("coin is required");
+        }
+        if (ObjectUtils.isEmpty(request.getAccountPrimaryKey())) {
+            throw new IllegalArgumentException("accountPrimaryKey is required");
+        }
+        if(ObjectUtils.isEmpty(request.getPassword())){
+            throw new IllegalArgumentException("password is required");
+        }
+        WebWalletApi webWalletApi = getWebWalletByCoin(request.getCoin().name());
+        return webWalletApi.checkWalletPassword(request);
+    }
+
+    @Override
+    public WalletOpResult<Boolean> changeWalletPassword(ChangeWalletPasswordRequest request) {
+        if (null == request.getCoin()) {
+            throw new IllegalArgumentException("coin is required");
+        }
+        if (ObjectUtils.isEmpty(request.getAccountPrimaryKey())) {
+            throw new IllegalArgumentException("accountPrimaryKey is required");
+        }
+        if(ObjectUtils.isEmpty(request.getNewPassword())){
+            throw new IllegalArgumentException("new password is required");
+        }
+        WebWalletApi webWalletApi = getWebWalletByCoin(request.getCoin().name());
+        return webWalletApi.changeWalletPassword(request);
+    }
+
+    @Override
     public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount,String base58ChangeAddress) {
         if (null == baseRequest.getCoin()) {
             throw new IllegalArgumentException("coin is required");

@@ -26,6 +26,16 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
+    public WalletOpResult<Boolean> checkWalletPassword(WalletBaseRequest request) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public WalletOpResult<Boolean> changeWalletPassword(ChangeWalletPasswordRequest request) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount,String base58ChangeAddress) {
         throw new UnsupportedOperationException();
     }

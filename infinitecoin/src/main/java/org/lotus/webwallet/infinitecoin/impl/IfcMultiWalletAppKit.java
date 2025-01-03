@@ -109,6 +109,17 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                 .orElse(null)).getWallet();
     }
 
+    public Wallet getWalletIfPresent(String walletKey){
+        if(ObjectUtils.isEmpty(walletKey)){
+            throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);
+        }
+        Wallet result = null;
+        if(walletKeyHashSet.contains(walletKey)){
+            result = customerWallets.stream().filter(w->w.getWalletKey().equals(walletKey)).findFirst().orElse(null).getWallet();
+        }
+        return result;
+    }
+
     public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere){
         if(ObjectUtils.isEmpty(walletKey)){
             throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);

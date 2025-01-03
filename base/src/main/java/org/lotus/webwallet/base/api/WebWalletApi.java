@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  **/
 public interface WebWalletApi {
-
+    public static final String SUCCESS = "SUCCESS";
     /**
      * ensure wallet for given account and password
      * if wallet exist return wallet summary info
@@ -30,6 +30,21 @@ public interface WebWalletApi {
      * @return address
      */
     String getAddress(WalletBaseRequest baseRequest);
+
+    /**
+     * check if password is right for given wallet
+     * @param request check request
+     * @return password if password ok
+     */
+    WalletOpResult<Boolean> checkWalletPassword(WalletBaseRequest request);
+
+
+    /**
+     * change given password for wallet
+     * @param request request
+     * @return true wallet result
+     */
+    WalletOpResult<Boolean> changeWalletPassword(ChangeWalletPasswordRequest request);
 
     /**
      * transfer give amount to given address

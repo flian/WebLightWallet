@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="co.yiiu.pybbs.mapper.UserWalletMapper">
-
+<select id="selectUserWalletByUserAndCoin" resultType="co.yiiu.pybbs.model.UserWallet">
+    select * from user_wallet where username=#{username} and coin_symbol=#{coinSymbol}
+</select>
 </mapper>

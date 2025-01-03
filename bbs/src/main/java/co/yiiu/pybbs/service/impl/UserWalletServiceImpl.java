@@ -1,13 +1,20 @@
 package co.yiiu.pybbs.service.impl;
 
 import co.yiiu.pybbs.mapper.RsaPrivatePubKeyMapper;
+import co.yiiu.pybbs.mapper.UserWalletMapper;
 import co.yiiu.pybbs.model.RsaPrivatePubKey;
+import co.yiiu.pybbs.model.User;
+import co.yiiu.pybbs.model.UserWallet;
 import co.yiiu.pybbs.service.UserWalletService;
 import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
+import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
 import co.yiiu.pybbs.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.lotus.webwallet.base.api.dto.*;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.lotus.webwallet.base.impl.WebWalletStrategy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,7 +22,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.UnsupportedEncodingException;
+
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -25,7 +33,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
 
 
 /**
@@ -42,6 +50,12 @@ public class UserWalletServiceImpl implements UserWalletService {
 
     @Resource
     private RsaPrivatePubKeyMapper rsaPrivatePubKeyMapper;
+
+    @Resource
+    private UserWalletMapper userWalletMapper;
+
+    @Resource
+    private WebWalletStrategy webWalletStrategy;
 
     @Override
     public boolean genAndSavePrivateKeys(int count) {
@@ -76,11 +90,119 @@ public class UserWalletServiceImpl implements UserWalletService {
 
     @Override
     public RsaPubKeyInfoForFrontDto pickOneRsaPubKey(String preferKey) {
-        return null;
+        RsaPrivatePubKey one = rsaPrivatePubKeyMapper.randomPickOneForUse();
+        RsaPubKeyInfoForFrontDto result = new RsaPubKeyInfoForFrontDto();
+        result.setIdxKey(one.getIdxKey());
+        result.setPublicKey(one.getPublicKey());
+        return result;
+    }
+
+
+    @Override
+    public boolean initForUserWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto) {
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol());
+        if(null != userWallet){
+            log.error("user already have  wallet for coin.user:{},coinSymbol:{},walletKey:{}",
+                    user.getUsername(),requestDto.getCoinSymbol(),userWallet.getWalletKey());
+            return false;
+        }
+        RsaPrivatePubKey key = rsaPrivatePubKeyMapper.selectByPubIdxKey(requestDto.getPubIdxKey());
+        try {
+            String password = deCryptText(requestDto.getEncryptedPassword(),key.getPrivateKey());
+            String walletKey = genWalletKeyForUser(user, requestDto.getCoinSymbol());
+            userWallet = new UserWallet();
+            userWallet.setUsername(userWallet.getUsername());
+            userWallet.setCoinSymbol(requestDto.getCoinSymbol());
+            userWallet.setWalletKey(walletKey);
+            if(requestDto.isSaveEncryptedPasswordForThisWallet()){
+                userWallet.setEncryptedPassword(requestDto.getEncryptedPassword());
+                userWallet.setPubIdxKey(requestDto.getPubIdxKey());
+                userWallet.setSavedWalletPassword(true);
+            }
+            userWallet.setBalance(BigDecimal.ZERO);
+            userWallet.setLockedAmount(BigDecimal.ZERO);
+
+            //try create a wallet
+            EnsureWalletRequest ensureWalletRequest = new EnsureWalletRequest();
+            ensureWalletRequest.setAccountPrimaryKey(walletKey);
+            ensureWalletRequest.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol()));
+            ensureWalletRequest.setPassword(password);
+            WalletOpResult<EnsureWalletResult> walletInfo = webWalletStrategy.ensureWallet(ensureWalletRequest);
+            if(walletInfo.isOk()){
+                userWallet.setWalletKey(walletInfo.getData().getWalletKey());
+                userWalletMapper.insert(userWallet);
+                return true;
+            }
+        } catch (Exception e) {
+            log.error("error create user wallet.user:{},coinSymbol:{}",user.getUsername(),requestDto.getCoinSymbol(),e);
+        }
+
+        return false;
+    }
+
+    protected String genWalletKeyForUser(User user,String coinSymbol){
+        return String.format("%s_%s_%s",Base64.encodeBase64String(user.getUsername().getBytes()),
+                coinSymbol,StringUtil.uuid());
     }
 
     @Override
-    public boolean initOrChangePasswordForWallet(String userName, WalletKeyAndPasswordInfoInitRequestDto requestDto) {
+    public boolean changeUserWalletPassword(User user, WalletResetPasswordRequestDto requestDto) {
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol());
+        if(null == userWallet){
+            log.error("user wallet is not created.user:{},coin:{}",user.getUsername(),requestDto.getCoinSymbol());
+            return false;
+        }
+        try {
+            RsaPrivatePubKey rsaKey = rsaPrivatePubKeyMapper.selectByPubIdxKey(requestDto.getPubIdxKey());
+            String decryptedOldPassword = deCryptText(requestDto.getEncryptedOldPassword(),rsaKey.getPrivateKey());
+            String decryptedNewPassword = deCryptText(requestDto.getEncryptedNewPassword(),rsaKey.getPrivateKey());
+            ChangeWalletPasswordRequest request = new ChangeWalletPasswordRequest();
+            request.setPassword(decryptedOldPassword);
+            request.setNewPassword(decryptedNewPassword);
+            request.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol()));
+            request.setAccountPrimaryKey(userWallet.getWalletKey());
+            WalletOpResult<Boolean>  requestResult = webWalletStrategy.changeWalletPassword(request);
+            boolean result =  requestResult.isOk()&& requestResult.getData();
+            if(result){
+                if(requestDto.isSaveEncryptedPasswordForThisWallet()){
+                    //update save password info
+                    userWallet.setPubIdxKey(requestDto.getPubIdxKey());
+                    userWallet.setSavedWalletPassword(true);
+                    userWallet.setEncryptedPassword(requestDto.getEncryptedNewPassword());
+                }else {
+                    //just update flag
+                    userWallet.setSavedWalletPassword(false);
+                }
+                userWalletMapper.updateById(userWallet);
+            }
+            return result;
+        }catch (Exception e){
+            log.error("change password fail.",e);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkPasswordForWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto) {
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),requestDto.getCoinSymbol());
+        if(null == userWallet){
+            log.error("user wallet is not created.user:{},coin:{}",user.getUsername(),requestDto.getCoinSymbol());
+            return false;
+        }
+        try {
+            RsaPrivatePubKey rsaKey = rsaPrivatePubKeyMapper.selectByPubIdxKey(requestDto.getPubIdxKey());
+            String decryptedPassword = deCryptText(requestDto.getEncryptedPassword(),rsaKey.getPrivateKey());
+            String walletKey = userWallet.getWalletKey();
+            WalletBaseRequest request = new WalletBaseRequest();
+            request.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol()));
+            request.setPassword(decryptedPassword);
+            request.setAccountPrimaryKey(walletKey);
+            WalletOpResult<Boolean> result = webWalletStrategy.checkWalletPassword(request);
+            return result.isOk()&& result.getData();
+        }catch (Exception e){
+            log.error("check password fail.",e);
+        }
         return false;
     }
 

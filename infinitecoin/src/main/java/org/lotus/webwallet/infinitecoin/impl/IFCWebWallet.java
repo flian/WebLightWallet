@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 
 import javax.annotation.Resource;
@@ -99,7 +100,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             WalletBaseResult baseResult = genCommonResult(walletKey,wallet);
             EnsureWalletResult ensureWalletResult = new EnsureWalletResult();
             BeanUtils.copyProperties(baseResult,ensureWalletResult);
-            return WalletOpResult.Ok(ensureWalletResult,"SUCCESS");
+            return WalletOpResult.Ok(ensureWalletResult,SUCCESS);
         }
         return null;
     }
@@ -132,6 +133,42 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             return wallet.getChangeAddress().toString();
         }
         return null;
+    }
+
+    private boolean isPasswordOk(Wallet wallet,String password){
+        if(null == wallet){
+            return false;
+        }
+        if(!wallet.isEncrypted() && ObjectUtils.isEmpty(password)){
+            return true;
+        }
+        return wallet.isEncrypted() && wallet.checkPassword(password);
+    }
+
+    @Override
+    public WalletOpResult<Boolean> checkWalletPassword(WalletBaseRequest request) {
+        WalletOpResult<Boolean> result = WalletOpResult.fail(WalletOpResultEnum.WALLET_PASSWORD_FAIL,"");
+        result.setData(false);
+        Wallet wallet = infiniteCoinMainKit.getWalletIfPresent(request.getAccountPrimaryKey());
+        if(isPasswordOk(wallet,request.getPassword())){
+            result = WalletOpResult.Ok(true,SUCCESS);
+        }
+        return result;
+    }
+
+    @Override
+    public WalletOpResult<Boolean> changeWalletPassword(ChangeWalletPasswordRequest request) {
+        WalletOpResult<Boolean> result = WalletOpResult.fail(WalletOpResultEnum.WALLET_PASSWORD_FAIL,"");
+        result.setData(false);
+        Wallet wallet = infiniteCoinMainKit.getWalletIfPresent(request.getAccountPrimaryKey());
+        if(null != wallet){
+            if(isPasswordOk(wallet,request.getPassword())){
+                wallet.decrypt(wallet.getKeyCrypter().deriveKey(request.getPassword()));
+                wallet.encrypt(request.getNewPassword());
+                result = WalletOpResult.Ok(true,SUCCESS);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -177,7 +214,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             Wallet.SendResult sendResult = wallet.sendCoins(req);
             TransferResult txResult = new TransferResult();
             txResult.setTxId(sendResult.tx.toString());
-            return WalletOpResult.Ok(txResult,"SUCCESS");
+            return WalletOpResult.Ok(txResult,SUCCESS);
         } catch (AddressFormatException e) {
             log.error("Address error.",e);
             throw new RuntimeException(e);

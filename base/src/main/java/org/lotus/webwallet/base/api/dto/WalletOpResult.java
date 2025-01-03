@@ -1,14 +1,23 @@
 package org.lotus.webwallet.base.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author : foy
  * @date : 2024/12/22:15:26
  **/
+@Getter
+@Setter
 public class WalletOpResult<T> {
     private WalletOpResultEnum code;
     private String message;
 
     private T Data;
+
+    public boolean isOk(){
+        return WalletOpResultEnum.SUCCESS.equals(code);
+    }
 
     public static <T> WalletOpResult<T> Ok(T data,String message){
         WalletOpResult<T> result = new WalletOpResult<>();

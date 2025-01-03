@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="co.yiiu.pybbs.mapper.RsaPrivatePubKeyMapper">
 
+    <select id="randomPickOneForUse" resultType="co.yiiu.pybbs.model.RsaPrivatePubKey">
+        select * from rsa_private_pub_key ORDER BY RAND() LIMIT 1;
+    </select>
+    <select id="selectByPubIdxKey" resultType="co.yiiu.pybbs.model.RsaPrivatePubKey">
+        select * from rsa_private_pub_key where pub_idx_key=#{pubIdxKey}
+    </select>
 </mapper>
