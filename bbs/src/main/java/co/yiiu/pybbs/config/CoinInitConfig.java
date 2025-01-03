@@ -24,7 +24,7 @@ public class CoinInitConfig {
     @Value("${spring.webwallet.coin.rsa.enabled:false}")
     private boolean initRsaKeys;
 
-    @Value("${spring.webwallet.coin.rsa.initsize:100}")
+    @Value("${spring.webwallet.coin.rsa.initsize:1000}")
     private int initSize;
     @PostConstruct
     public void initRsaKeys() {

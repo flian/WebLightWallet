@@ -11,11 +11,13 @@ import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
 import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
 import co.yiiu.pybbs.util.StringUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -59,10 +61,16 @@ public class UserWalletService implements IUserWalletService {
     @Resource
     private WebWalletStrategy webWalletStrategy;
 
+    @Value("${spring.webwallet.coin.rsa.defaultMaxSize:10000}")
+    private int maxKeySize;
     @Override
     public boolean genAndSavePrivateKeys(int count) {
         try {
             if(count > 0){
+                if(rsaPrivatePubKeyMapper.selectCount(new QueryWrapper<>())>=maxKeySize){
+                    log.info("reach max RSA key size,skip gen keys.");
+                    return true;
+                }
                 List<KeyPair> needSave = new ArrayList<>(count);
                 for(int i=0;i<count;i++){
                     needSave.add(generateRSAKeyPair(DEFAULT_RSA_KEY_SIZE));
