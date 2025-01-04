@@ -78,11 +78,13 @@
                                 <th>IFC</th>
                                 <th>地址</th>
                                 <th>余额</th>
+                                <th>刷新余额</th>
                             </tr>
                             <tr>
                                 <td>IFC</td>
                                 <td>${coinWalletMap['INFINITE_COIN'].primaryAddress}</td>
                                 <td>${coinWalletMap['INFINITE_COIN'].balance}</td>
+                                <td><button type="button" id="ifcRefreshBalanceBtn" class="btn btn-info">刷新</button></td>
                             </tr>
                         </table>
                     </#if>
@@ -266,6 +268,20 @@
                         }
                     }
                 })
+            });
+
+            //refresh balance
+            $("#ifcRefreshBalanceBtn").on("click",function (){
+                req("post","/api/coin/${user.username}/refresh/INFINITE_COIN",{},"${_user.token!}",function (refreshResult){
+                    if(refreshResult.code === 200){
+                        suc("成功");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 700);
+                    } else {
+                        err("失败");
+                    }
+                });
             });
 
             //IFC初始/修改密码

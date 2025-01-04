@@ -152,6 +152,9 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                 }
                 newWalletData.setWallet(newWallet);
                 if (useAutoSave) newWallet.autosaveToFile(newWalletFile, 1, TimeUnit.SECONDS, null);
+                //fist create and save now ensure no data lost.
+                newWallet.saveToFile(newWalletFile);
+
                 result = newWalletData.getWallet();
                 vMainChain.addWallet(newWallet);
                 vPeerGroup.addWallet(newWallet);

@@ -21,7 +21,7 @@
                     <tr>
                         <td><a href="/user/${user.username}">${user.username}</a></td>
                         <td>${coinRank.wallets[user_index].primaryAddress}</td>
-                        <td>${user.score} - ${coinRank.wallets[user_index].balance}</td>
+                        <td>${coinRank.wallets[user_index].balance}</td>
                         <td>TBD</td>
                     </tr>
                 </#list>

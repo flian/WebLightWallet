@@ -52,6 +52,14 @@ public interface IUserWalletService {
     boolean initForUserWallet(User user, WalletKeyAndPasswordInfoInitRequestDto requestDto);
 
     /**
+     * refresh user coin balance info
+     * @param user user
+     * @param coin coin
+     * @return refresh ok or not
+     */
+    boolean refreshCoinBalance(User user,SupportedCoins coin);
+
+    /**
      * transfer coin from user to others
      * @param user user
      * @param transferCoinRequestDto transaction info

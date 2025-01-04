@@ -56,6 +56,16 @@ public class CoinApiController extends BaseApiController {
         return error("can't get one pub key!");
     }
 
+    @PostMapping("/{username}/refresh/{coin}")
+    public Result freshBalanceForMyCoin(@PathVariable(name = "username") String username,@PathVariable("coin") String coin){
+        User me =getApiUser();
+        if(null == me || !me.getUsername().equals(username)){
+            log.error("error, invalid user request...");
+            return error("invalid request.");
+        }
+        return userWalletService.refreshCoinBalance(me,SupportedCoins.valueOf(coin))?success():error("fail.");
+    }
+
     @GetMapping("/{username}/coins")
     public Result listUserCoinInfo(@PathVariable(name = "username") String username){
         // 查询用户个人信息

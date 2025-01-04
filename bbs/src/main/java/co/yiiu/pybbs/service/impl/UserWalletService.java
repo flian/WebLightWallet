@@ -9,11 +9,9 @@ import co.yiiu.pybbs.service.IUserService;
 import co.yiiu.pybbs.service.IUserWalletService;
 import co.yiiu.pybbs.service.vo.*;
 import co.yiiu.pybbs.util.StringUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.elasticsearch.common.recycler.Recycler;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
@@ -26,7 +24,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -38,8 +35,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.apache.shiro.web.filter.mgt.DefaultFilter.user;
 
 
 /**
@@ -185,6 +180,23 @@ public class UserWalletService implements IUserWalletService {
             log.error("error create user wallet.user:{},coinSymbol:{}",user.getUsername(),requestDto.getCoinSymbol(),e);
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean refreshCoinBalance(User user, SupportedCoins coin) {
+        UserWallet userWallet = userWalletMapper.selectUserWalletByUserAndCoin(user.getUsername(),coin.name());
+        if(null != userWallet){
+            EnsureWalletRequest request = new EnsureWalletRequest();
+            request.setCoin(coin);
+            request.setAccountPrimaryKey(userWallet.getWalletKey());
+            WalletOpResult<EnsureWalletResult> result = webWalletStrategy.ensureWallet(request);
+            if(result.isOk()){
+                userWallet.setBalance(result.getData().getBalance());
+                userWalletMapper.updateById(userWallet);
+                return true;
+            }
+        }
         return false;
     }
 
