@@ -20,7 +20,7 @@
                 <#list coinRank.users as user>
                     <tr>
                         <td><a href="/user/${user.username}">${user.username}</a></td>
-                        <td><a href="https://chainz.cryptoid.info/ifc/address.dws?${coinRank.wallets[user_index].primaryAddress}.htm">detail</a></td>
+                        <td><a href="https://chainz.cryptoid.info/ifc/address.dws?${coinRank.wallets[user_index].primaryAddress}.htm">详情</a></td>
                         <td>${coinRank.wallets[user_index].balance}</td>
                         <td>打赏</td>
                     </tr>
