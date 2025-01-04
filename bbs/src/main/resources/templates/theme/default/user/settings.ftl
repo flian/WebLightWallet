@@ -70,6 +70,33 @@
                 </div>
             </div>
             <div class="card">
+                <div class="card-header">IFC钱包设置</div>
+                <div class="card-body">
+                    <form onsubmit="return;" class="form-horizontal">
+                        <div class="form-group row">
+                            <label for="ifcWalletPassword" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="password" name="ifcWalletConfirmPassword" id="ifcWalletPassword" class="form-control"  placeholder="密码"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="ifcWalletConfirmPassword" class="col-sm-2 control-label">确认密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" name="ifcWalletConfirmPassword" id="ifcWalletConfirmPassword" class="form-control" placeholder="确认密码"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <button type="button" id="settings_email_btn" class="btn btn-info">开通IFC钱包/修改IFC钱包密码</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
                 <div class="card-header">修改邮箱</div>
                 <div class="card-body">
                     <form onsubmit="return;" class="form-horizontal">
