@@ -1,5 +1,5 @@
 <#macro score limit coinSymbol top100=false>
-    <div class="card">
+    <div class="card" style="width: 500px">
         <@coin_balance limit=limit coinSymbol=coinSymbol>
         <div class="card-header">
             ${coinRank.coin}富豪榜
@@ -20,9 +20,9 @@
                 <#list coinRank.users as user>
                     <tr>
                         <td><a href="/user/${user.username}">${user.username}</a></td>
-                        <td>${coinRank.wallets[user_index].primaryAddress}</td>
+                        <td><a href="https://chainz.cryptoid.info/ifc/address.dws?${coinRank.wallets[user_index].primaryAddress}.htm">detail</a></td>
                         <td>${coinRank.wallets[user_index].balance}</td>
-                        <td>TBD</td>
+                        <td>打赏</td>
                     </tr>
                 </#list>
         </table>
