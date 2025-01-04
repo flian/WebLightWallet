@@ -32,5 +32,6 @@
     <#include "footer.ftl"/>
     <#include "../components/websocket.ftl"/>
     </body>
+    <#include "sendCoinForm.ftl"/>
     </html>
 </#macro>

@@ -10,6 +10,19 @@ function tip(msg) {
     layer.msg(msg, {offset: 't'});
 }
 
+function openSendCoin(coin,toUser,toAddress,amount){
+    layer.open({
+        type:1,
+        title:'打赏',
+        area:['800px','600px'],
+        content:$("#_sendCoinFormDiv"),
+        btn:['发送','取消'],
+        yes:()=>{
+            suc("haha");
+        }
+    });
+}
+
 function RSAEncrypt(pubKey,data){
      let encrypt = new JSEncrypt();
      encrypt.setPublicKey(pubKey);
