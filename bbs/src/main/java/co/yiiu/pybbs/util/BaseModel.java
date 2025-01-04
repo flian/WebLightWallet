@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -37,6 +38,10 @@ public class BaseModel {
     private static final long WEEK = 7 * DAY;
     private static final long MONTH = 31 * DAY;
     private static final long YEAR = 12 * MONTH;
+
+    public String formatDate(LocalDateTime localDateTime){
+        return formatDate(DateUtil.asDate(localDateTime));
+    }
 
     /**
      * 格式化日期

@@ -4,6 +4,8 @@ import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -21,6 +23,10 @@ public class DateUtil {
     public static final String FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss";
     public static final String FORMAT_DATE = "yyyy-MM-dd";
     public static final String TIME_ZONE = "GMT+8";
+
+    public static Date asDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
 
     public static String formatDateTime(Date date) {
         return DateUtil.formatDateTime(date, DateUtil.FORMAT_DATETIME);
