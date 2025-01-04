@@ -16,4 +16,5 @@ public class UserWalletInfo {
     private String walletKey;
     private BigDecimal balance;
     private BigDecimal lockedAmount;
+    private String primaryAddress;
 }

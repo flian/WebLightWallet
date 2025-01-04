@@ -297,7 +297,7 @@
                                             window.location.reload();
                                         }, 700);
                                     }else {
-                                        err(data.description);
+                                        err(changeResult.description);
                                     }
                             });
                         }else {
