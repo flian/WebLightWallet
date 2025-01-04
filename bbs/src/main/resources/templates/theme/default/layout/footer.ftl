@@ -1,23 +1,22 @@
 <footer class="p-3">
     <div class="container d-none d-md-block">
         <p>
-            更实用的Java语言开发的论坛&nbsp;|&nbsp;
-            <a href="https://github.com/atjiu/pybbs" target="_blank">开源地址</a>&nbsp;|&nbsp;
-            <a href="https://atjiu.github.io/pybbs/" target="_blank">文档地址</a>
+            IFC水友论坛&nbsp;|&nbsp;
+
             <span class="pull-right">
-        <a href="/adminlogin" target="_blank">登录后台</a>&nbsp;|&nbsp;
+
         <a href="/changeLanguage?lang=zh">中文</a>&nbsp;|&nbsp;
         <a href="/changeLanguage?lang=en">English</a>
       </span>
         </p>
         <div>
-            &copy;2018 tomoya&nbsp;
+            &copy;2025 IFC&nbsp;
             <span class="pull-right">
-        powered by <a href="https://github.com/atjiu/pybbs" target="_blank">pybbs</a>
+        powered by <a href="https://www.infinitecoin.com/" target="_blank">infinitecoin</a>
       </span>
         </div>
     </div>
     <div class="container text-center d-md-none">
-        powered by <a href="https://github.com/atjiu/pybbs" target="_blank">pybbs</a>
+        powered by <a href="https://www.infinitecoin.com/" target="_blank">infinitecoin</a>
     </div>
 </footer>
