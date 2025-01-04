@@ -47,6 +47,8 @@ public class FreemarkerConfig {
     @Resource
     private SocialDirective socialDirective;
     @Resource
+    private CoinBalanceDirective coinBalanceDirective;
+    @Resource
     private BaseModel baseModel;
     @Resource
     private ShiroTag shiroTag;
@@ -74,6 +76,7 @@ public class FreemarkerConfig {
         configuration.setSharedVariable("tag_user_collects", userCollectsDirective);
         configuration.setSharedVariable("tag_topic_comments", topicCommentsDirective);
         configuration.setSharedVariable("tag_social_list", socialDirective);
+        configuration.setSharedVariable("coin_balance", coinBalanceDirective);
 
         configuration.setSharedVariable("i18n", localeMessageSourceUtil);
         log.info("freemarker自定义标签配置完成!");

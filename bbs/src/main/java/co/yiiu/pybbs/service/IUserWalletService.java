@@ -3,17 +3,24 @@ package co.yiiu.pybbs.service;
 
 import co.yiiu.pybbs.model.User;
 import co.yiiu.pybbs.model.UserWallet;
-import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
-import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
-import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
+import co.yiiu.pybbs.service.vo.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
-import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
+
+import java.util.List;
 
 /**
  * @author : foy
  * @date : 2025/1/2:20:50
  **/
 public interface IUserWalletService {
+
+    /**
+     * top n user for supported coins
+     * @param topN topN user
+     * @return list
+     */
+    CoinRank listTopUsers(SupportedCoins coin,int topN);
+
     /**
      * generate rsa pub and private key for using.
      * @param count how many keys to generate and save in db

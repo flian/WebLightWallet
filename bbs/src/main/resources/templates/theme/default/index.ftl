@@ -38,6 +38,8 @@
             </#if>
             <#include "components/score.ftl"/>
             <@score limit=10/>
+            <#include "components/coinRank.ftl"/>
+            <@score limit=10 coinSymbol="INFINITE_COIN"/>
         </div>
     </div>
 </@html>

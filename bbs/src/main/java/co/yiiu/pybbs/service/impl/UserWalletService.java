@@ -5,15 +5,15 @@ import co.yiiu.pybbs.mapper.UserWalletMapper;
 import co.yiiu.pybbs.model.RsaPrivatePubKey;
 import co.yiiu.pybbs.model.User;
 import co.yiiu.pybbs.model.UserWallet;
+import co.yiiu.pybbs.service.IUserService;
 import co.yiiu.pybbs.service.IUserWalletService;
-import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
-import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
-import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
-import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
+import co.yiiu.pybbs.service.vo.*;
 import co.yiiu.pybbs.util.StringUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.elasticsearch.common.recycler.Recycler;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
@@ -37,7 +37,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.apache.shiro.web.filter.mgt.DefaultFilter.user;
 
 
 /**
@@ -63,8 +65,35 @@ public class UserWalletService implements IUserWalletService {
     @Resource
     private WebWalletStrategy webWalletStrategy;
 
+    @Resource
+    private IUserService userService;
+
     @Value("${web.wallet.rsa.defaultMaxSize:1000}")
     private int maxKeySize;
+
+    @Override
+    public CoinRank listTopUsers(SupportedCoins coin, int topN) {
+        int limit = 100;
+        if(topN<100){
+            limit = topN;
+        }
+        QueryWrapper<UserWallet> wrapper = new QueryWrapper<>();
+        wrapper.eq("coin_symbol",coin.name());
+        wrapper.orderByDesc("balance").last("limit " + limit);
+        List<UserWallet> userWallets =  userWalletMapper.selectList(wrapper);
+        List<String> usernames = userWallets.stream().map(UserWallet::getUsername).collect(Collectors.toList());
+        List<User> users = new ArrayList<>();
+        List<User> list  = userService.listByUserNames(usernames);
+        for(String u:usernames){
+            list.stream().filter(uu -> uu.getUsername().equals(u)).findFirst().ifPresent(users::add);
+        }
+        CoinRank result = new CoinRank();
+        result.setCoin(coin);
+        result.setUsers(users);
+        result.setWallets(userWallets);
+        return result;
+    }
+
     @Override
     public boolean genAndSavePrivateKeys(int count) {
         try {

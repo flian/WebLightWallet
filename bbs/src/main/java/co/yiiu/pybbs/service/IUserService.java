@@ -51,4 +51,6 @@ public interface IUserService {
 
     // 删除redis缓存
     void delRedisUser(User user);
+
+    List<User> listByUserNames(List<String> usernames);
 }

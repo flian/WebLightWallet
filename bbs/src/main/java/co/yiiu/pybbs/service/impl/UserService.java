@@ -10,9 +10,11 @@ import co.yiiu.pybbs.util.bcrypt.BCryptPasswordEncoder;
 import co.yiiu.pybbs.util.identicon.Identicon;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,10 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by tomoya.
@@ -256,5 +255,15 @@ public class UserService implements IUserService {
     @Override
     public void delRedisUser(User user) {
 
+    }
+
+    @Override
+    public List<User> listByUserNames(List<String> usernames) {
+        if(CollectionUtils.isEmpty(usernames)){
+            return Collections.emptyList();
+        }
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.in("username",usernames);
+        return userMapper.selectList(wrapper);
     }
 }
