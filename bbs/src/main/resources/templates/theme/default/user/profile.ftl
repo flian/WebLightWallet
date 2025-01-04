@@ -5,7 +5,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="media">
-                        <img src="${user.avatar!}" class="mr-3 avatar avatar-lg" alt="avatar"/>
+                        <img src="${user.avatar!"/static/theme/default/images/ifc.jpeg"}" class="mr-3 avatar avatar-lg" alt="avatar"/>
                         <div class="media-body">
                             <h3 style="margin-top: 0">${user.username!}</h3>
                             <div>积分：<a href="/top100">${user.score}</a></div>

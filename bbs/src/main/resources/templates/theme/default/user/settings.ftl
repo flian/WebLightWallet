@@ -105,9 +105,9 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-2 control-label" style="vertical-align: middle">当前头像</label>
                             <div class="col-sm-10">
-                                <img src="${user.avatar!}" class="avatar avatar-lg" alt="avatar"/>&nbsp;&nbsp;
-                                <img src="${user.avatar!}" class="avatar" style="vertical-align: bottom" alt="avatar"/>&nbsp;&nbsp;
-                                <img src="${user.avatar!}" class="avatar avatar-sm" style="vertical-align: bottom" alt="avatar"/>
+                                <img src="${user.avatar!"/static/theme/default/images/ifc.jpeg"}" class="avatar avatar-lg" alt="avatar"/>&nbsp;&nbsp;
+                                <img src="${user.avatar!}/static/theme/default/images/ifc.jpeg" class="avatar" style="vertical-align: bottom" alt="avatar"/>&nbsp;&nbsp;
+                                <img src="${user.avatar!}/static/theme/default/images/ifc.jpeg" class="avatar avatar-sm" style="vertical-align: bottom" alt="avatar"/>
                             </div>
                             <div class="offset-sm-2 col-sm-10" style="margin-top: 10px;">
                                 <a href="javascript:;" id="selectAvatar">上传新头像</a>

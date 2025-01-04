@@ -1,8 +1,11 @@
 package co.yiiu.pybbs.model;
 
+import co.yiiu.pybbs.util.DefaultSettings;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -68,6 +71,9 @@ public class User implements Serializable {
     }
 
     public String getAvatar() {
+        if(ObjectUtils.isEmpty(avatar)){
+            return DefaultSettings.DEFUALT_AVATAR_URL;
+        }
         return avatar;
     }
 
