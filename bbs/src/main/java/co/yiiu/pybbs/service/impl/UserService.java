@@ -1,7 +1,9 @@
 package co.yiiu.pybbs.service.impl;
 
+import co.yiiu.pybbs.controller.api.vo.UserWalletInfo;
 import co.yiiu.pybbs.mapper.UserMapper;
 import co.yiiu.pybbs.model.User;
+import co.yiiu.pybbs.model.UserWallet;
 import co.yiiu.pybbs.service.*;
 import co.yiiu.pybbs.util.MyPage;
 import co.yiiu.pybbs.util.SpringContextUtil;
@@ -11,6 +13,8 @@ import co.yiiu.pybbs.util.identicon.Identicon;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.commons.collections4.ListUtils;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +56,9 @@ public class UserService implements IUserService {
     private ISystemConfigService systemConfigService;
     @Resource
     private ICodeService codeService;
+
+    @Resource
+    private IUserWalletService userWalletService;
 
     // 根据用户名查询用户，用于获取用户的信息比对密码
     @Override
@@ -178,6 +185,18 @@ public class UserService implements IUserService {
     @Override
     public User selectById(Integer id) {
         return userMapper.selectById(id);
+    }
+
+    @Override
+    public Map<String,UserWalletInfo> userWallet(String username) {
+        Map<String,UserWalletInfo> result = new HashMap<>();
+        UserWallet userWallet = userWalletService.selectUserWalletByUserAndCoin(username,SupportedCoins.INFINITE_COIN);
+        if(null != userWallet){
+            UserWalletInfo walletInfo = new UserWalletInfo();
+            BeanUtils.copyProperties(userWallet,walletInfo);
+            result.put(SupportedCoins.INFINITE_COIN.name(),walletInfo);
+        }
+        return result;
     }
 
     @Override

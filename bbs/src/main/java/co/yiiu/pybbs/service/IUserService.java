@@ -1,9 +1,12 @@
 package co.yiiu.pybbs.service;
 
+import co.yiiu.pybbs.controller.api.vo.UserWalletInfo;
 import co.yiiu.pybbs.model.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tomoya.
@@ -30,6 +33,8 @@ public interface IUserService {
     User selectByEmail(String email);
 
     User selectById(Integer id);
+
+    Map<String,UserWalletInfo> userWallet(String username);
 
     User selectByIdWithoutCache(Integer id);
 

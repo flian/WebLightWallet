@@ -1,5 +1,6 @@
 package co.yiiu.pybbs.controller.front;
 
+import co.yiiu.pybbs.controller.api.vo.UserWalletInfo;
 import co.yiiu.pybbs.model.Code;
 import co.yiiu.pybbs.model.User;
 import co.yiiu.pybbs.service.ICodeService;
@@ -8,6 +9,7 @@ import co.yiiu.pybbs.service.IUserService;
 import co.yiiu.pybbs.util.CookieUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by tomoya.
@@ -62,7 +65,9 @@ public class IndexController extends BaseController {
     public String settings(HttpSession session, Model model) {
         // 再查一遍，保证数据的最新
         User user = userService.selectById(getUser().getId());
+        Map<String , UserWalletInfo>  coinWalletMap = userService.userWallet(user.getUsername());
         model.addAttribute("user", user);
+        model.addAttribute("coinWalletMap",coinWalletMap);
         return render("user/settings");
     }
 

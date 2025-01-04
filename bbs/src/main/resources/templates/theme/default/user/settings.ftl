@@ -72,6 +72,20 @@
             <div class="card">
                 <div class="card-header">IFC钱包设置</div>
                 <div class="card-body">
+                    <#if coinWalletMap['INFINITE_COIN']??>
+                        <table class="table">
+                            <tr>
+                                <th>IFC</th>
+                                <th>地址</th>
+                                <th>余额</th>
+                            </tr>
+                            <tr>
+                                <td>IFC</td>
+                                <td>${coinWalletMap['INFINITE_COIN'].primaryAddress}</td>
+                                <td>${coinWalletMap['INFINITE_COIN'].balance}</td>
+                            </tr>
+                        </table>
+                    </#if>
                     <form onsubmit="return;" class="form-horizontal">
                         <div class="form-group row">
                             <label for="ifcWalletPassword" class="col-sm-2 control-label">密码</label>
@@ -85,6 +99,17 @@
                             <label for="ifcWalletConfirmPassword" class="col-sm-2 control-label">确认密码</label>
                             <div class="col-sm-10">
                                 <input type="password" name="ifcWalletConfirmPassword" id="ifcWalletConfirmPassword" class="form-control" placeholder="确认密码"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="rememberPassword">记住密码。
+                                        <br/>
+                                        系统会记住密码，后续操作会比较方便，但是不太安全。不记住密码，忘记密码会比较麻烦：）请权衡后勾选！！！
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
