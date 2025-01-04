@@ -158,7 +158,7 @@ public class UserWalletService implements IUserWalletService {
             String password = deCryptText(requestDto.getEncryptedPassword(),key.getPrivateKey());
             String walletKey = genWalletKeyForUser(user, requestDto.getCoinSymbol().name());
             userWallet = new UserWallet();
-            userWallet.setUsername(userWallet.getUsername());
+            userWallet.setUsername(user.getUsername());
             userWallet.setCoinSymbol(requestDto.getCoinSymbol().name());
             userWallet.setWalletKey(walletKey);
             if(requestDto.isSaveEncryptedPasswordForThisWallet()){
@@ -177,6 +177,7 @@ public class UserWalletService implements IUserWalletService {
             WalletOpResult<EnsureWalletResult> walletInfo = webWalletStrategy.ensureWallet(ensureWalletRequest);
             if(walletInfo.isOk()){
                 userWallet.setWalletKey(walletInfo.getData().getWalletKey());
+                userWallet.setPrimaryAddress(walletInfo.getData().getBase58Address());
                 userWalletMapper.insert(userWallet);
                 return true;
             }
@@ -215,7 +216,7 @@ public class UserWalletService implements IUserWalletService {
 
     protected String genWalletKeyForUser(User user,String coinSymbol){
         return String.format("%s_%s_%s",Base64.encodeBase64String(user.getUsername().getBytes()),
-                coinSymbol,StringUtil.uuid());
+                coinSymbol,StringUtil.randUUidStr());
     }
 
     @Override

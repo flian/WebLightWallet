@@ -37,6 +37,7 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
             log.info("find one web wallet implementing:{}", webWalletsMap.get(coin).getClass());
             return webWalletsMap.get(coin);
         }
+
         log.info("can't find wallet implement,return default one:{}", notFoundDefaultWebWallet.getClass());
         return notFoundDefaultWebWallet;
     }

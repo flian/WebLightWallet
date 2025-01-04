@@ -10,6 +10,7 @@ import org.lotus.webwallet.base.api.enums.SupportedCoins;
 @Data
 public class UserCreateCoinWalletRequest {
     private String coinSymbol;
+    private String encryptedOldPassword;
     private String encryptedPassword;
     private String pubIdxKey;
     private boolean saveEncryptedPasswordForThisWallet;

@@ -87,11 +87,21 @@
                         </table>
                     </#if>
                     <form onsubmit="return;" class="form-horizontal">
+                        <#if coinWalletMap['INFINITE_COIN']??>
                         <div class="form-group row">
-                            <label for="ifcWalletPassword" class="col-sm-2 control-label">密码</label>
+                            <label for="ifcWalletOldPassword" class="col-sm-2 control-label">原密码</label>
                             <div class="col-sm-10">
                                 <div class="input-group">
-                                    <input type="password" name="ifcWalletConfirmPassword" id="ifcWalletPassword" class="form-control"  placeholder="密码"/>
+                                    <input type="password" name="ifcWalletOldPassword" id="ifcWalletOldPassword" class="form-control"  placeholder="原密码"/>
+                                </div>
+                            </div>
+                        </div>
+                        </#if>
+                        <div class="form-group row">
+                            <label for="ifcWalletPassword" class="col-sm-2 control-label">新密码</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="password" name="ifcWalletPassword" id="ifcWalletPassword" class="form-control"  placeholder="新密码"/>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +115,7 @@
                             <div class="offset-sm-2 col-sm-10">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" id="rememberPassword">记住密码。
+                                        <input type="checkbox" name="ifcRememberPassword" id="ifcRememberPassword">记住密码。
                                         <br/>
                                         系统会记住密码，后续操作会比较方便，但是不太安全。不记住密码，忘记密码会比较麻烦：）请权衡后勾选！！！
                                     </label>
@@ -114,7 +124,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="offset-sm-2 col-sm-10">
-                                <button type="button" id="settings_email_btn" class="btn btn-info">开通IFC钱包/修改IFC钱包密码</button>
+                                <button type="button" id="ifcWalletSubmit" class="btn btn-info">开通IFC钱包/修改IFC钱包密码</button>
                             </div>
                         </div>
                     </form>
@@ -258,6 +268,45 @@
                 })
             });
 
+            //IFC初始/修改密码
+            $("#ifcWalletSubmit").on("click",function (){
+                let oldPassword = $("#ifcWalletOldPassword").val();
+                let password = $("#ifcWalletPassword").val();
+                let confirmPassword = $("#ifcWalletConfirmPassword").val();
+                let ifcRememberPassword = $("#ifcRememberPassword").is(":checked");
+                if(!password || !(password === confirmPassword)){
+                    err("密码为空或密码和确认密码不匹配。");
+                }else {
+                    req("get","/api/coin/public/key/rsa",{},{},function (data){
+                        let resPubKey = '';
+                        if(data.code === 200){
+                            resPubKey = data.detail;
+                            let encryptedOldPassword = null;
+                            if(oldPassword){
+                                //if contain old password,means change password.
+                                encryptedOldPassword = RSAEncrypt(resPubKey.publicKey,oldPassword);
+                            }
+                            let encryptedPassword = RSAEncrypt(resPubKey.publicKey,password);
+                            let idxKey = resPubKey.idxKey;
+                            req("post","/api/coin/${user.username}/init/coin"
+                                ,{"coinSymbol":"INFINITE_COIN","encryptedOldPassword":encryptedOldPassword,"encryptedPassword":encryptedPassword,
+                                    "pubIdxKey":idxKey,"saveEncryptedPasswordForThisWallet":ifcRememberPassword},"${_user.token!}",function (changeResult){
+                                    if(changeResult.code === 200){
+                                        suc("初始化/修改IFC钱包密码成功");
+                                        setTimeout(function () {
+                                            window.location.reload();
+                                        }, 700);
+                                    }else {
+                                        err(data.description);
+                                    }
+                            });
+                        }else {
+                            err(data.description);
+                        }
+                    });
+
+                }
+            });
             // 发送激活邮件
             $("#sendActiveEmail").on("click", function () {
                 req("get", "/api/settings/sendActiveEmail", "${_user.token!}", function (data) {

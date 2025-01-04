@@ -6,6 +6,6 @@
         select * from rsa_private_pub_key ORDER BY RAND() LIMIT 1;
     </select>
     <select id="selectByPubIdxKey" resultType="co.yiiu.pybbs.model.RsaPrivatePubKey">
-        select * from rsa_private_pub_key where pub_idx_key=#{pubIdxKey}
+        select * from rsa_private_pub_key where idx_key=#{pubIdxKey}
     </select>
 </mapper>

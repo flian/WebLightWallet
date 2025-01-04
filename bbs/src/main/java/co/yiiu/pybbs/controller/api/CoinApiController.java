@@ -11,9 +11,11 @@ import co.yiiu.pybbs.service.IUserWalletService;
 import co.yiiu.pybbs.service.vo.RsaPubKeyInfoForFrontDto;
 import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
+import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
 import co.yiiu.pybbs.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -78,14 +80,35 @@ public class CoinApiController extends BaseApiController {
             log.error("error, invalid user request...");
             return error("invalid request.");
         }
-        WalletKeyAndPasswordInfoInitRequestDto requestDto = new WalletKeyAndPasswordInfoInitRequestDto();
-        requestDto.setCoinSymbol(SupportedCoins.valueOf(userCreateCoinWalletRequest.getCoinSymbol()));
-        requestDto.setPubIdxKey(userCreateCoinWalletRequest.getPubIdxKey());
-        requestDto.setEncryptedPassword(userCreateCoinWalletRequest.getEncryptedPassword());
-        requestDto.setSaveEncryptedPasswordForThisWallet(userCreateCoinWalletRequest.isSaveEncryptedPasswordForThisWallet());
-        if(userWalletService.initForUserWallet(me,requestDto)){
-            return success();
+        //init wallet case
+        if(ObjectUtils.isEmpty(userCreateCoinWalletRequest.getEncryptedOldPassword())){
+            WalletKeyAndPasswordInfoInitRequestDto requestDto = new WalletKeyAndPasswordInfoInitRequestDto();
+            requestDto.setCoinSymbol(SupportedCoins.valueOf(userCreateCoinWalletRequest.getCoinSymbol()));
+            requestDto.setPubIdxKey(userCreateCoinWalletRequest.getPubIdxKey());
+            requestDto.setEncryptedPassword(userCreateCoinWalletRequest.getEncryptedPassword());
+            requestDto.setSaveEncryptedPasswordForThisWallet(userCreateCoinWalletRequest.isSaveEncryptedPasswordForThisWallet());
+            if(userWalletService.initForUserWallet(me,requestDto)){
+                return success();
+            }
+        }else{
+            //change password case
+            WalletKeyAndPasswordInfoInitRequestDto checkRequest = new WalletKeyAndPasswordInfoInitRequestDto();
+            checkRequest.setCoinSymbol(SupportedCoins.valueOf(userCreateCoinWalletRequest.getCoinSymbol()));
+            checkRequest.setPubIdxKey(userCreateCoinWalletRequest.getPubIdxKey());
+            checkRequest.setEncryptedPassword(userCreateCoinWalletRequest.getEncryptedOldPassword());
+            if(userWalletService.checkPasswordForWallet(me,checkRequest)){
+                WalletResetPasswordRequestDto resetPasswordRequestDto =new WalletResetPasswordRequestDto();
+                resetPasswordRequestDto.setCoinSymbol(userCreateCoinWalletRequest.getCoinSymbol());
+                resetPasswordRequestDto.setEncryptedOldPassword(userCreateCoinWalletRequest.getEncryptedOldPassword());
+                resetPasswordRequestDto.setEncryptedNewPassword(userCreateCoinWalletRequest.getEncryptedPassword());
+                resetPasswordRequestDto.setPubIdxKey(userCreateCoinWalletRequest.getPubIdxKey());
+                resetPasswordRequestDto.setSaveEncryptedPasswordForThisWallet(userCreateCoinWalletRequest.isSaveEncryptedPasswordForThisWallet());
+                return userWalletService.changeUserWalletPassword(me,resetPasswordRequestDto)?success():error("change password fail.");
+            }else{
+                return error("password is not right,u forget password?");
+            }
         }
+
         return error("not result.");
     }
 
