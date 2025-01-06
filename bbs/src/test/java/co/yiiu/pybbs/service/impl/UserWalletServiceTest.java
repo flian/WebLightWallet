@@ -1,0 +1,28 @@
+package co.yiiu.pybbs.service.impl;
+
+import org.junit.jupiter.api.Test;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * @author : foy
+ * @date : 2025/1/6:19:42
+ **/
+class UserWalletServiceTest {
+
+    private UserWalletService userWalletService = new UserWalletService();
+    @Test
+    void deCryptText() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException {
+        String privateKey ="MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCUPpqg6l1Md41YgyfYscqgb1XbX2mrU2ihw95pRaj93hJJtlNbsz/7LJONzj/vB6x5CoCt4OCyIJuXo5t0z3P9X66UySH2twOMqIuXBigc40W6ShlxJcctDDRBvkMjTdTMRZkEZfgnYACzjDr1XB5nB8iN2jtGphZ9uzD+KKnKJuDpimgFGzZe57RmI2ZKIMXloaWCCcfnQDnlRn6uLqiHp6AICZM62RUb+nmt4xG9XR+O693ON3FrfLkk5AexaP/NBYUgndjhrf+PhvH/7T5/pqomnJGA98WeJEwClzuq/s3V3EPG/aA5nJkAFlrnptqUYbvZXVWYzWOBiA5NQ7LFAgMBAAECggEAJFiFCNbtMQZOvVjKuDI+/77MShDGk57LlH21VhIiMLv1t+Tf4ye7lBWFx8q9mhlDjBmrGvZ7oLCl9TPDtYv3YDPJVelKTnbog9/++XQk+ZAvVFE+k6MzhjPrzAKd61X1ym916MInaV/8TAkhm26OdaxO25iZ1+R4tzLh/C50En++Lc72XKVH3J8vaym4MQEmZA3irR1Yz2yxxsVPsTu2m72ZU9usIaxe1ddtzAn2dP/ILSlNZ+6I4p+FZTm4ItcbflG75dO98Oi91jPpdVATTWjRBbZZOuZVuE+PtX5Q9bJYq/dmgl4f3MVHawrBJIoqShgzmXnYjJnk9iE8TjOGsQKBgQDICTERwqazCWyk9DOoJBUN/hPud+k/tSiqk+fqNyU4HXPWoGH1/N/wPfijAk5etUfuOnUDzcdGc+GsEdA0Am3egHDZBUQDQ5evyOKucXI0NJuyqQPfmHj9k8TIwuLgXctlywbRbXUnzeAC28HSy7hBOSJ8VL5+tjbq7R3WOoutswKBgQC9uA3QsIVkpl5BDXsxQ4fvpfjM2dHsXZhWWj4J8OV/l1G48IduYTUa4+XeAfAME+aWhE0hvbb1OZ9iZV2q0wAAAoIHLstGqaSjiGoFVl/hvNx4LuanDelDUHRqYK8XfljXZ25bcVuRzXqfsjhsluBn9lL6J2zoPoKQCByvgrGRpwKBgQCb9t61dEk5Ks30xxpHrOploIa11fSc4Yi1huC5swln+T7KRv5aJzILRKZJopCsMzfEPPvjXVxUSCHaYYEuK/6yDv7tlrdyvA7W1hA35ugeYC5NXI5SlbUwMTirN5hhS4A8+9FzFJ7VzCUu1V0IGCKvZ/bFbeWhMj0baolq8PbbFQKBgQCR7cLipQTV+IpDa4U4zYMAOR/5IgqwzwVgVqWlq+A7lj9MC+eAZdEdT/L+I2trPtt9J2LU80KJubr5SpMT1J0JZORzdfDx94cmKsWyOVAjKMxEvX65PKASIQ6KzLehUJQxi+N8/uK6cd1CfSmdjSgrj3Mf67d/pKV0+GhoMBU5vQKBgAnJSdIrDBdOoOd63e/EP+70rJ14J3fScB4oXmRa8d2/IDuDmtzEThdVmeKcYv9b8jIAqiHHFZMFrSFeiKfXF/nYIQNeEKWLthmLlxneES63sAgqy4MngkRHqmBn7JB5X/51l/ySCZC+/tJTsZ7A54a3i2Hjtsc8DhutENRctM4k";
+        String encrytedStr ="FkgoVxMfJ6TRb63x+8uFsXtZR13fzVljAlaptgq8af0EuZGCPaBW/Qc6cXDM1Sm2ubWt5w/8/CF3iZ9c9X/PQh5/tvG+nzJhlq1UwOti8pvYKJp330sSD1SM2CKGI00D2kBFDC1hO1Pa5fhmj7k/fYM09pbY/I4zDEGm2zQHObr41OvzScED4lRz/fgTwW+D1nZ7S6D90KecViSL/sN57PYfnohmnVbw3OqXdaAteMqtbjCOP8rkcXMRNjlTjeCqvbrM0dujvhVjgrQEyaVb6HS8slRXT+LSGjZkmhL0KrXRbWeF5uAgvz4MnhCFo5A91uMr87Vmav86Zg6mCQq+Ng==";
+        String password = userWalletService.deCryptText(encrytedStr,privateKey);
+       System.out.println(password);
+    }
+}
