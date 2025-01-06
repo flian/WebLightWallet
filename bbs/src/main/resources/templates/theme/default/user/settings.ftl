@@ -79,12 +79,14 @@
                                 <th>地址</th>
                                 <th>余额</th>
                                 <th>刷新余额</th>
+                                <th>操作</th>
                             </tr>
                             <tr>
                                 <td>IFC</td>
                                 <td>${coinWalletMap['INFINITE_COIN'].primaryAddress}</td>
                                 <td>${coinWalletMap['INFINITE_COIN'].balance}</td>
                                 <td><button type="button" id="ifcRefreshBalanceBtn" class="btn btn-info">刷新</button></td>
+                                <td><button type="button" id="ifcTransferBtn" class="btn btn-info" onclick="openSendCoin(true,'${coinRank.coin}','','',1000,'${_user.username}')">转账</button></td>
                             </tr>
                         </table>
                     </#if>

@@ -36,8 +36,6 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me){
         yes:()=>{
             if(checkAndSendCoin()){
                 suc("发送硬币成功~");
-            }else {
-                err("发送硬币失败~")
             }
         }
     });
@@ -46,14 +44,24 @@ function checkAndSendCoin(){
     let coin = $("#_coinName").val();
     let send2User= $("#_sendCoinToUser").val();
     let send2Address = $("#_sendCoinToAddress").val();
+    let passwordIn = $("#_sendCoinPassword").val();
+    if(!send2User&&!send2Address){
+        err("转账用户和地址不能同时为空!!!");
+        return false;
+    }
+    if(!passwordIn){
+        err("密码不能为空！！！");
+        return false;
+    }
     let amt = $("#_sendCoinAmount").val();
     let uuid = $("#_sendCoinUuid").val();
     let rsaKey = getOneRsaKey();
-    let encryptedPassword = RSAEncrypt(getRsaPublicKey(rsaKey),$("#_sendCoinPassword").val());
+    let encryptedPassword = RSAEncrypt(getRsaPublicKey(rsaKey),passwordIn);
     let idxKey = getRsaIdxKey(rsaKey);
-
+    let postUrl = "/api/coin/${_user.username}/"+coin+"/transfer";
+    console.log(postUrl);
     let requestJson={"coinSymbol":coin,"toUserName":send2User,"toAddress":send2Address,"amount":amt,"encryptedPassword":encryptedPassword,"pubIdxKey":idxKey,"uuid":uuid};
-    req("post","/api/coin/${_user.username}"+coin+"/transfer",requestJson,"${_user.token!}",function (trsResult){
+    req("post",postUrl,requestJson,"${_user.token!}",function (trsResult){
         if(trsResult.code === 200){
             setTimeout(function () {
                 window.location.reload();
