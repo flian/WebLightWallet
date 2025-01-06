@@ -13,6 +13,14 @@ import java.math.BigDecimal;
  *
  **/
 public interface WebWalletApi {
+
+    /**
+     * get current coin net info
+     * @param coin coin
+     * @return net info
+     */
+    CoinNetInfo currentNetInfo(SupportedCoins coin);
+
     public static final String SUCCESS = "SUCCESS";
     /**
      * ensure wallet for given account and password

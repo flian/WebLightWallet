@@ -44,6 +44,11 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
     }
 
     @Override
+    public CoinNetInfo currentNetInfo(SupportedCoins coin) {
+        return getWebWalletByCoin(coin.name()).currentNetInfo(coin);
+    }
+
+    @Override
     public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
         if (null == request.getCoin()) {
             throw new IllegalArgumentException("coin is required");

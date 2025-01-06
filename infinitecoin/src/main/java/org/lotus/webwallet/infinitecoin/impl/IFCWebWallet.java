@@ -1,7 +1,6 @@
 package org.lotus.webwallet.infinitecoin.impl;
 
 import com.google.infinitecoinj.core.*;
-
 import com.google.infinitecoinj.params.MainNetParams;
 import com.google.infinitecoinj.params.RegTestParams;
 import com.google.infinitecoinj.params.TestNet3Params;
@@ -16,17 +15,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-
 import static com.google.infinitecoinj.core.CoinDefinition.DUST_LIMIT;
-import static com.google.infinitecoinj.core.CoinDefinition.proofOfWorkLimit;
 
 /**
  * @author : foy
@@ -54,6 +48,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
 
     protected final NetworkParameters networkParameters;
     protected final IfcMultiWalletAppKit infiniteCoinMainKit;
+    protected final CoinNetInfo currentNetInfo;
     public IFCWebWallet(@Value("${web.wallet.ifc.net:regtest}") String net,
                         @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost,
                         @Value("${web.wallet.ifc.minFee:1}") String minFee,
@@ -63,15 +58,19 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
         this.ifcNet = net;
         DEFAULT_FEE = Utils.toNanoCoins(minFee);
         DEFAULT_FEE_PER_KB =  Utils.toNanoCoins(minFeePerKb);
+        currentNetInfo = new CoinNetInfo(SupportedCoins.INFINITE_COIN,"IFC",ifcNet,"");
         if(REG_TEST_NET.equals(ifcNet)){
             //TODO default reg test net
             networkParameters = RegTestParams.get();
+            currentNetInfo.setCurrentNetDesc("回归测试网络");
         }else if(TEST_NET.equals(ifcNet)){
          //TODO test net
             networkParameters = TestNet3Params.get();
+            currentNetInfo.setCurrentNetDesc("测试网络");
         }else {
             //TODO main net
             networkParameters = MainNetParams.get();
+            currentNetInfo.setCurrentNetDesc("主网");
         }
         infiniteCoinMainKit = new IfcMultiWalletAppKit(networkParameters,
                 new File(webWalletFileConfigProperties.getCoinRootPath(SupportedCoins.INFINITE_COIN)+File.separator+ifcNet)
@@ -90,6 +89,12 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
         infiniteCoinMainKit.peerGroup().setMaxConnections(11);
         log.info("mainWallet info:{}",infiniteCoinMainKit.wallet());
     }
+
+    @Override
+    public CoinNetInfo currentNetInfo(SupportedCoins coin) {
+        return currentNetInfo;
+    }
+
     @Override
     public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
         if(supportCoin(request.getCoin())){

@@ -93,6 +93,11 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
     }
 
     @Override
+    public CoinNetInfo queryCoinNetInfo(SupportedCoins coin) {
+        return webWalletStrategy.currentNetInfo(coin);
+    }
+
+    @Override
     public boolean genAndSavePrivateKeys(int count) {
         try {
             if (count > 0) {

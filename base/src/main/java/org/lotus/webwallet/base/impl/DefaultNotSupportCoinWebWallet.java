@@ -15,6 +15,13 @@ import java.math.BigDecimal;
 
 @Service(value = Constants.DEFAULT_NOT_SUPPORT_COIN)
 public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
+    protected static final CoinNetInfo NOT_SUPPORT_COIN = new CoinNetInfo(SupportedCoins.DEFAULT_NOT_SUPPORT_COIN, "", "NONE", "");
+
+    @Override
+    public CoinNetInfo currentNetInfo(SupportedCoins coin) {
+        return NOT_SUPPORT_COIN;
+    }
+
     @Override
     public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
         throw new UnsupportedOperationException();
@@ -41,7 +48,7 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount,String base58ChangeAddress) {
+    public WalletOpResult<TransferResult> transferToAddress(WalletBaseRequest baseRequest, String base58ToAddress, BigDecimal amount, String base58ChangeAddress) {
         throw new UnsupportedOperationException();
     }
 

@@ -17,7 +17,7 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me,token){
     $("#_sendCoinToAddress").val(toAddress);
     $("#_sendCoinAmount").val(amount);
     $("#_sendCoinUuid").val(uuid(64,16));
-
+    let coinLetInfo = {};
     req('get','/api/coin/'+me+'/coins',{},function (coinDetail){
         if(coinDetail.code === 200){
             coinDetail.detail.forEach(function (cc,index) {
@@ -25,6 +25,12 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me,token){
                    $("#_totalAmount").text('可用余额:'+cc.availableAmount);
                }
             });
+        }
+    });
+    req('get','/api/coin/'+coin+'/netInfo',{},{},function(coinNetInfoData){
+        if(coinNetInfoData.code === 200){
+            coinLetInfo = coinNetInfoData.data;
+            $("#_sendCoin").text(coinLetInfo.coinDesc+",["+coinLetInfo.currentNet+":"+coinLetInfo.currentNetDesc+"]");
         }
     });
     layer.open({

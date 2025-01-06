@@ -47,6 +47,11 @@ public class CoinApiController extends BaseApiController {
         return resultList;
     }
 
+    @GetMapping("/{coin}/netInfo")
+    public Result coinNetInfo(@PathVariable(name = "coin") String coin){
+        return success(userWalletService.queryCoinNetInfo(SupportedCoins.valueOf(coin)));
+    }
+
     @GetMapping("/public/key/rsa")
     public Result getPubKeyForEncrypt(@RequestParam(required = false,name = "preferKey") String preferKey){
         RsaPubKeyInfoForFrontDto rsaKey = userWalletService.pickOneRsaPubKey(preferKey);

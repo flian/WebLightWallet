@@ -4,6 +4,7 @@ package co.yiiu.pybbs.service;
 import co.yiiu.pybbs.model.User;
 import co.yiiu.pybbs.model.UserWallet;
 import co.yiiu.pybbs.service.vo.*;
+import org.lotus.webwallet.base.api.dto.CoinNetInfo;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 
 import java.util.List;
@@ -20,6 +21,13 @@ public interface IUserWalletService {
      * @return list
      */
     CoinRank listTopUsers(SupportedCoins coin,int topN);
+
+    /**
+     * query coin net info
+     * @param coin coin
+     * @return net info
+     */
+    CoinNetInfo queryCoinNetInfo(SupportedCoins coin);
 
     /**
      * generate rsa pub and private key for using.
