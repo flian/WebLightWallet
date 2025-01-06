@@ -5,7 +5,7 @@
                 <label  class="col-sm-2 control-label">币种</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <span>IFC</span>
+                        <span id="_sendCoin">IFC</span>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,8 @@
                 <label for="_sendCoinAmount" class="col-sm-2 control-label">金额</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <span><input type="text" name="amount" id="_sendCoinAmount" class="form-control" placeholder="金额" value="1001"/> - 可用余额:12.11</span>
+                        <span><input type="text" name="amount" id="_sendCoinAmount" class="form-control" placeholder="金额" value="1001"/></span>
+                        <span id="_totalAmount"></span>
                     </div>
                 </div>
             </div>
