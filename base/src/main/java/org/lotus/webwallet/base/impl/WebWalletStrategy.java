@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.lotus.webwallet.base.api.WebWalletApi;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.lotus.webwallet.base.exceptions.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -117,6 +118,11 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
             throw new IllegalArgumentException("amount is empty or invalid.");
         }
         WebWalletApi webWalletApi = getWebWalletByCoin(baseRequest.getCoin().name());
+        WalletOpResult<Boolean> checkResult = webWalletApi.checkWalletPassword(baseRequest);
+        if(!(checkResult.isOk()&&checkResult.getData())){
+           //password is not right.
+            throw  new BizException("check wallet password fail.");
+        }
         return webWalletApi.transferToAddress(baseRequest, base58ToAddress, amount,base58ChangeAddress);
     }
 
