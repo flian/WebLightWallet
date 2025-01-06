@@ -22,7 +22,12 @@
                         <td><a href="/user/${user.username}">${user.username}</a></td>
                         <td><a href="https://chainz.cryptoid.info/ifc/address.dws?${coinRank.wallets[user_index].primaryAddress}.htm">详情</a></td>
                         <td>${coinRank.wallets[user_index].balance}</td>
-                        <td><button type="button" onclick="openSendCoin(false,'${coinRank.coin}','${user.username}','${coinRank.wallets[user_index].primaryAddress}',1000,'${_user.username}')">打赏</button></td>
+                        <td>
+                            <#if _user??>
+                            <button type="button" onclick="openSendCoin(false,'${coinRank.coin}','${user.username}','${coinRank.wallets[user_index].primaryAddress}',1000,'${_user.username}')">打赏
+                            </button>
+                            </#if>
+                        </td>
                     </tr>
                 </#list>
         </table>
