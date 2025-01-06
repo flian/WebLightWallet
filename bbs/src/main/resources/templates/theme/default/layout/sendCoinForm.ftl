@@ -21,7 +21,7 @@
                 <label for="_sendCoinToAddress" class="col-sm-2 control-label">地址</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <span><input type="text" name="toAddress" id="_sendCoinToAddress" class="form-control" placeholder="地址"/></span>
+                        <span><input type="text" name="toAddress" id="_sendCoinToAddress" class="form-control" placeholder="地址" style="width: 400px"/></span>
                     </div>
                 </div>
             </div>
