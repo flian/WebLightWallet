@@ -38,6 +38,7 @@
                 <label for="_sendCoinPassword" class="col-sm-2 control-label">密码</label>
                 <div class="col-sm-10">
                     <input type="password" name="password" id="_sendCoinPassword" class="form-control" placeholder="密码"/>
+                    <input type="hidden" name="sendCoinUuid" id="_sendCoinUuid" class="form-control" placeholder="uuid"/>
                 </div>
             </div>
 
