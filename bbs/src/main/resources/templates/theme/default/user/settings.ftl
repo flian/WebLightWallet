@@ -119,7 +119,7 @@
                             <div class="offset-sm-2 col-sm-10">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="ifcRememberPassword" id="ifcRememberPassword">记住密码。
+                                        <input type="checkbox" name="ifcRememberPassword" id="ifcRememberPassword" checked>记住密码。
                                         <br/>
                                         系统会记住密码，后续操作会比较方便，但是不太安全。不记住密码，忘记密码会比较麻烦：）请权衡后勾选！！！
                                     </label>
