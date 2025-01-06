@@ -24,7 +24,7 @@
                         <td>${coinRank.wallets[user_index].balance}</td>
                         <td>
                             <#if _user??>
-                            <button type="button" onclick="openSendCoin(false,'${coinRank.coin}','${user.username}','${coinRank.wallets[user_index].primaryAddress}',1000,'${_user.username}')">打赏
+                            <button type="button" onclick="openSendCoin(false,'${coinRank.coin}','${user.username}','${coinRank.wallets[user_index].primaryAddress}',1000,'${_user.username}','${_user.token!}')">打赏
                             </button>
                             </#if>
                         </td>

@@ -152,6 +152,6 @@ public class CoinApiController extends BaseApiController {
         if(userWalletService.transferCoin(me,toRequestDto)){
             return success();
         }
-        return error("not result.");
+        return error("密码错误，发送失败！！");
     }
 }

@@ -10,7 +10,7 @@ function tip(msg) {
     layer.msg(msg, {offset: 't'});
 }
 
-function openSendCoin(send,coin,toUser,toAddress,amount,me){
+function openSendCoin(send,coin,toUser,toAddress,amount,me,token){
     $("#_sendCoin").text(coin);
     $("#_coinName").val(coin);
     $("#_sendCoinToUser").val(toUser);
@@ -34,13 +34,13 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me){
         content:$("#_sendCoinFormDiv"),
         btn:['发送','取消'],
         yes:()=>{
-            if(checkAndSendCoin()){
+            if(checkAndSendCoin(me,token)){
                 suc("发送硬币成功~");
             }
         }
     });
 }
-function checkAndSendCoin(){
+function checkAndSendCoin(me,token){
     let coin = $("#_coinName").val();
     let send2User= $("#_sendCoinToUser").val();
     let send2Address = $("#_sendCoinToAddress").val();
@@ -58,10 +58,10 @@ function checkAndSendCoin(){
     let rsaKey = getOneRsaKey();
     let encryptedPassword = RSAEncrypt(getRsaPublicKey(rsaKey),passwordIn);
     let idxKey = getRsaIdxKey(rsaKey);
-    let postUrl = "/api/coin/${_user.username}/"+coin+"/transfer";
+    let postUrl = "/api/coin/"+me+"/"+coin+"/transfer";
     console.log(postUrl);
     let requestJson={"coinSymbol":coin,"toUserName":send2User,"toAddress":send2Address,"amount":amt,"encryptedPassword":encryptedPassword,"pubIdxKey":idxKey,"uuid":uuid};
-    req("post",postUrl,requestJson,"${_user.token!}",function (trsResult){
+    req("post",postUrl,requestJson,token,function (trsResult){
         if(trsResult.code === 200){
             setTimeout(function () {
                 window.location.reload();
