@@ -12,6 +12,7 @@ function tip(msg) {
 
 function openSendCoin(send,coin,toUser,toAddress,amount,me){
     $("#_sendCoin").text(coin);
+    $("#_coinName").val(coin);
     $("#_sendCoinToUser").val(toUser);
     $("#_sendCoinToAddress").val(toAddress);
     $("#_sendCoinAmount").val(amount);
@@ -33,11 +34,38 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me){
         content:$("#_sendCoinFormDiv"),
         btn:['发送','取消'],
         yes:()=>{
-
-            suc("haha");
+            if(checkAndSendCoin()){
+                suc("发送硬币成功~");
+            }else {
+                err("发送硬币失败~")
+            }
         }
     });
 }
+function checkAndSendCoin(){
+    let coin = $("#_coinName").val();
+    let send2User= $("#_sendCoinToUser").val();
+    let send2Address = $("#_sendCoinToAddress").val();
+    let amt = $("#_sendCoinAmount").val();
+    let uuid = $("#_sendCoinUuid").val();
+    let rsaKey = getOneRsaKey();
+    let encryptedPassword = RSAEncrypt(getRsaPublicKey(rsaKey),$("#_sendCoinPassword").val());
+    let idxKey = getRsaIdxKey(rsaKey);
+
+    let requestJson={"coinSymbol":coin,"toUserName":send2User,"toAddress":send2Address,"amount":amt,"encryptedPassword":encryptedPassword,"pubIdxKey":idxKey,"uuid":uuid};
+    req("post","/api/coin/${_user.username}"+coin+"/transfer",requestJson,"${_user.token!}",function (trsResult){
+        if(trsResult.code === 200){
+            setTimeout(function () {
+                window.location.reload();
+            }, 2000);
+            return true;
+        }else {
+            err(trsResult.description);
+            return false;
+        }
+    });
+}
+
 function uuid(len, radix) {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = [], i;
@@ -66,6 +94,23 @@ function uuid(len, radix) {
 
     return uuid.join('');
 }
+
+function getOneRsaKey(){
+    let rsaPubKey = {};
+    req("get","/api/coin/public/key/rsa",{},{},function (data){
+        if(data.code === 200) {
+            rsaPubKey = data.detail;
+        }
+    });
+    return rsaPubKey;
+}
+function getRsaPublicKey(rsaPubKey){
+    return rsaPubKey.publicKey;
+}
+function getRsaIdxKey(rsaPubKey){
+    return rsaPubKey.idxKey;
+}
+
 function RSAEncrypt(pubKey,data){
      let encrypt = new JSEncrypt();
      encrypt.setPublicKey(pubKey);

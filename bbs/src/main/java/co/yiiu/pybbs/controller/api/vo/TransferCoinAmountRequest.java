@@ -14,4 +14,5 @@ public class TransferCoinAmountRequest {
     private double amount;
     private String encryptedPassword;
     private String pubIdxKey;
+    private String uuid;
 }

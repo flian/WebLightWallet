@@ -1,11 +1,12 @@
 <div class="card" id="_sendCoinFormDiv" style="display: none;">
     <div class="card-body">
-        <form onsubmit="return;" class="form-horizontal">
+        <form onsubmit="return;" class="form-horizontal" id="_layerSendCoinForm">
             <div class="form-group row">
                 <label  class="col-sm-2 control-label">币种</label>
                 <div class="col-sm-10">
                     <div class="input-group">
                         <span id="_sendCoin">IFC</span>
+                        <input type="hidden" id="_coinName" name="coin"/>
                     </div>
                 </div>
             </div>
