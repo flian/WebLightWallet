@@ -29,7 +29,7 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me,token){
     });
     req('get','/api/coin/'+coin+'/netInfo',{},{},function(coinNetInfoData){
         if(coinNetInfoData.code === 200){
-            coinLetInfo = coinNetInfoData.data;
+            coinLetInfo = coinNetInfoData.detail;
             $("#_sendCoin").text(coinLetInfo.coinDesc+",["+coinLetInfo.currentNet+":"+coinLetInfo.currentNetDesc+"]");
         }
     });
@@ -68,6 +68,8 @@ function checkAndSendCoin(me,token){
     console.log(postUrl);
     let requestJson={"coinSymbol":coin,"toUserName":send2User,"toAddress":send2Address,"amount":amt,"encryptedPassword":encryptedPassword,"pubIdxKey":idxKey,"uuid":uuid};
     req("post",postUrl,requestJson,token,function (trsResult){
+        //reset password filed after one call
+        $("#_sendCoinPassword").val('');
         if(trsResult.code === 200){
             setTimeout(function () {
                 window.location.reload();

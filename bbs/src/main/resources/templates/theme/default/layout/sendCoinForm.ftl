@@ -5,7 +5,7 @@
                 <label  class="col-sm-2 control-label">币种</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <span id="_sendCoin">IFC</span>
+                        <span id="_sendCoin" style="color: blue;font-weight:bold;font-size: large;">IFC</span>
                         <input type="hidden" id="_coinName" name="coin"/>
                     </div>
                 </div>
