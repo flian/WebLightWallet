@@ -1,5 +1,5 @@
 <#macro score limit top100=false>
-    <div class="card">
+    <div class="card card500">
         <div class="card-header">
             积分榜
             <#if !top100>

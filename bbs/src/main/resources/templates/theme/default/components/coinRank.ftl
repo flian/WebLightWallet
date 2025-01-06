@@ -1,5 +1,5 @@
 <#macro score limit coinSymbol top100=false>
-    <div class="card" style="width: 500px">
+    <div class="card card500">
         <@coin_balance limit=limit coinSymbol=coinSymbol>
         <div class="card-header">
             ${coinRank.coin}富豪榜

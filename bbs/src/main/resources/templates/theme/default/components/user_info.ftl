@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card card500">
     <div class="card-body pb-2">
         <div class="media">
             <a href="/user/${_user.username!}" class="mr-3">

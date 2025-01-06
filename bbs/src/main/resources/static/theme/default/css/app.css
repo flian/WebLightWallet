@@ -84,6 +84,9 @@ a, a:hover {
 .card table {
     margin-bottom: 0;
 }
+.card500 {
+    width: 500px
+}
 
 .card > .table td, .card > .table th {
     padding-left: 15px;
