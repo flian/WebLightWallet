@@ -23,6 +23,13 @@ public interface WebWalletApi {
      */
     WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request);
 
+    /**
+     * just ensure given wallet key is ready.
+     * if wallet is not there, not create one,just info result.
+     * @param request wallet key
+     * @return true if load ok
+     */
+    WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request);
 
     /**
      * get a public address for account

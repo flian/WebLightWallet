@@ -36,10 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -87,8 +85,8 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
     protected boolean blockingStartup = true;
     protected String userAgent, version;
 
-    protected List<IfcWalletAndChainData> customerWallets = new ArrayList<>();
-    protected HashSet<String> walletKeyHashSet = new HashSet<>();
+
+    protected Map<String,IfcWalletAndChainData> walletKeyHashMap = new ConcurrentHashMap<>(10000);
 
     protected boolean useSingleBlockChainIfo = true;
 
@@ -98,15 +96,15 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
             log.info("invalid wallet key:{}",walletKey);
             return false;
         }
-        return !walletKeyHashSet.contains(walletKey);
+        return !walletKeyHashMap.containsKey(walletKey);
     }
 
     public Wallet getWalletByKey(String walletKey){
-        if(!walletKeyHashSet.contains(walletKey)){
+        if(!walletKeyHashMap.containsKey(walletKey)){
             throw new BizException("can't find wallet.for key:"+walletKey);
         }
-        return Objects.requireNonNull(customerWallets.stream().filter(w -> w.getWalletKey().equals(walletKey)).findFirst()
-                .orElse(null)).getWallet();
+        return walletKeyHashMap.get(walletKey).getWallet();
+
     }
 
     public Wallet getWalletIfPresent(String walletKey){
@@ -114,19 +112,23 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
             throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);
         }
         Wallet result = null;
-        if(walletKeyHashSet.contains(walletKey)){
-            result = customerWallets.stream().filter(w->w.getWalletKey().equals(walletKey)).findFirst().orElse(null).getWallet();
+        if(walletKeyHashMap.containsKey(walletKey)){
+            result = walletKeyHashMap.get(walletKey).getWallet();
         }
         return result;
     }
 
     public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere){
+        return ensureLoadWallet(walletKey,defaultPasswordIfNotThere,true);
+    }
+
+    public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere,boolean createIfNotFound){
         if(ObjectUtils.isEmpty(walletKey)){
             throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);
         }
         Wallet result = null;
-        if(walletKeyHashSet.contains(walletKey)){
-            result = customerWallets.stream().filter(w->w.getWalletKey().equals(walletKey)).findFirst().orElse(null).getWallet();
+        if(walletKeyHashMap.containsKey(walletKey)){
+            result = walletKeyHashMap.get(walletKey).getWallet();
         }
         if(null != result){
             return result;
@@ -144,6 +146,10 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                     newWallet = new Wallet(params);
                     new WalletProtobufSerializer().readWallet(WalletProtobufSerializer.parseToProto(walletStream), newWallet);
                 } else {
+                    if(!createIfNotFound){
+                        log.info("don't create wallet,but not wallet found,return null,walletKey:{},createIfNotFound:{}",walletKey,createIfNotFound);
+                        return null;
+                    }
                     newWallet = new Wallet(params);
                     newWallet.addKey(new ECKey());
                     if(!ObjectUtils.isEmpty(defaultPasswordIfNotThere)){
@@ -158,8 +164,7 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                 result = newWalletData.getWallet();
                 vMainChain.addWallet(newWallet);
                 vPeerGroup.addWallet(newWallet);
-                walletKeyHashSet.add(walletKey);
-                customerWallets.add(newWalletData);
+                walletKeyHashMap.put(walletKey,newWalletData);
             }catch (Exception e){
                 log.error("error load wallet..",e);
             }
@@ -383,8 +388,9 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
         try {
             vPeerGroup.stopAndWait();
             vMainWallet.saveToFile(vWalletFile);
-            customerWallets.stream().forEach(customerWalletData ->{
+            walletKeyHashMap.keySet().forEach(key ->{
                 try {
+                    IfcWalletAndChainData customerWalletData = walletKeyHashMap.get(key);
                     customerWalletData.getWallet().saveToFile(customerWalletData.getVWalletFile());
                     customerWalletData.setWallet(null);
                 } catch (IOException e) {

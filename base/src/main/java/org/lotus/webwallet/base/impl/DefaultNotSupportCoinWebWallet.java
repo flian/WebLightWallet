@@ -21,6 +21,11 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest baseRequest) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getAddress(WalletBaseRequest baseRequest) {
         throw new UnsupportedOperationException();
     }

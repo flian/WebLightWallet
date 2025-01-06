@@ -38,4 +38,14 @@ public class WalletBaseResult {
      * wallet summary info
      */
     private String walletInfo;
+
+    /**
+     * if wallet is exist
+     */
+    private boolean walletExist;
+
+    /**
+     * if wallet is exist, if wallet is load and ready to work
+     */
+    private boolean loaded;
 }

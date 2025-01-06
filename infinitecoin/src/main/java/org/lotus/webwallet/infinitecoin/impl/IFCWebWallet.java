@@ -26,6 +26,7 @@ import java.math.BigInteger;
 
 
 import static com.google.infinitecoinj.core.CoinDefinition.DUST_LIMIT;
+import static com.google.infinitecoinj.core.CoinDefinition.proofOfWorkLimit;
 
 /**
  * @author : foy
@@ -103,6 +104,24 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             return WalletOpResult.Ok(ensureWalletResult,SUCCESS);
         }
         return null;
+    }
+
+    @Override
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request) {
+        WalletOpResult<WalletBaseResult> result = WalletOpResult.fail(WalletOpResultEnum.FAIL,"");
+        if(supportCoin(request.getCoin())) {
+            Wallet wallet = infiniteCoinMainKit.ensureLoadWallet(request.getAccountPrimaryKey(), "",false);
+            if(null != wallet){
+                result.setData(genCommonResult(request.getAccountPrimaryKey(),wallet));
+                result.getData().setWalletExist(true);
+                result.getData().setLoaded(true);
+            }else {
+                result.setData(new WalletBaseResult());
+                result.getData().setWalletExist(false);
+                result.getData().setLoaded(false);
+            }
+        }
+        return result;
     }
 
     private Wallet getWalletByKey(String key,String password){

@@ -10,11 +10,14 @@ import co.yiiu.pybbs.service.IUserWalletService;
 import co.yiiu.pybbs.service.vo.*;
 import co.yiiu.pybbs.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -45,7 +48,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserWalletService implements IUserWalletService {
+public class UserWalletService implements IUserWalletService, InitializingBean {
     protected static final String WALLET_ENCRYPTED_METHOD_KEY = "RSA";
     protected static final int DEFAULT_RSA_KEY_SIZE = 2048;
 
@@ -325,4 +328,38 @@ public class UserWalletService implements IUserWalletService {
         return RSA_GENERATEOR.generateKeyPair();
     }
 
+
+    protected void loadWallet(){
+        //ensure wallet load
+        QueryWrapper<UserWallet> queryWrapper = new QueryWrapper<>();
+        int totalCount = userWalletMapper.selectCount(queryWrapper);
+        int pageSize = 1000;
+        int totalPage = totalCount/pageSize+totalCount%pageSize;
+        if(totalCount>0){
+            for(int currentPage=1;currentPage<=totalPage;currentPage++){
+                IPage<UserWallet> list = userWalletMapper.selectPage(new Page<>(currentPage,pageSize),queryWrapper);
+                list.getRecords().forEach(wallet->{
+                    try {
+                        WalletBaseRequest request = new WalletBaseRequest();
+                        request.setCoin(SupportedCoins.valueOf(wallet.getCoinSymbol()));
+                        request.setAccountPrimaryKey(wallet.getWalletKey());
+                        WalletOpResult<WalletBaseResult> walletLoadResult = webWalletStrategy.loadWalletKey(request);
+                        if(null !=walletLoadResult && walletLoadResult.isOk()
+                                && walletLoadResult.getData().isWalletExist() && walletLoadResult.getData().isLoaded()){
+                            log.info("load wallet with key success.walletKey:{}",wallet.getWalletKey());
+                        }else {
+                            log.info("load wallet with key fail.walletKey:{}",wallet.getWalletKey());
+                        }
+                    }catch (Exception e){
+                        log.error("error load wallet.",e);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        loadWallet();
+    }
 }

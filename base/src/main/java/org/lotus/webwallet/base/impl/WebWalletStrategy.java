@@ -60,6 +60,19 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
     }
 
     @Override
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request) {
+        if (null == request.getCoin()) {
+            throw new IllegalArgumentException("coin is required");
+        }
+        if (ObjectUtils.isEmpty(request.getAccountPrimaryKey())) {
+            throw new IllegalArgumentException("accountPrimaryKey is required");
+        }
+        WebWalletApi webWalletApi = getWebWalletByCoin(request.getCoin().name());
+
+        return webWalletApi.loadWalletKey(request);
+    }
+
+    @Override
     public String getAddress(WalletBaseRequest baseRequest) {
         if (null == baseRequest.getCoin()) {
             throw new IllegalArgumentException("coin is required");
