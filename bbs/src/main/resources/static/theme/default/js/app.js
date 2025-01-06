@@ -10,16 +10,16 @@ function tip(msg) {
     layer.msg(msg, {offset: 't'});
 }
 
-function openSendCoin(send,coin,toUser,toAddress,amount){
+function openSendCoin(send,coin,toUser,toAddress,amount,me){
     $("#_sendCoin").text(coin);
     $("#_sendCoinToUser").val(toUser);
     $("#_sendCoinToAddress").val(toAddress);
     $("#_sendCoinAmount").val(amount);
-    req('get','/api/coin/${user.username}/coins',{},function (coinDetail){
-        if(coinDetail.data === 200){
+    req('get','/api/coin/'+me+'/coins',{},function (coinDetail){
+        if(coinDetail.code === 200){
             coinDetail.detail.forEach(function (cc,index) {
-               if(cc === coin){
-                   $("#_totalAmount").text('可以余额:'+cc.availableAmount);
+               if(cc.coin === coin){
+                   $("#_totalAmount").text('可用余额:'+cc.availableAmount);
                }
             });
         }
