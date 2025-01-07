@@ -225,6 +225,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
             baseRequest.setPassword(password);
             WalletOpResult<TransferResult> transferResult = webWalletStrategy.transferToAddress(baseRequest, toAddress, BigDecimal.valueOf(transferCoinRequestDto.getAmount()), fromWallet.getPrimaryAddress());
             if (transferResult.isOk()) {
+                log.info("transaction success,detail,txHash:{}.detail:{}",transferResult.getData().getTxId(),transferResult.getData().getTxDetail());
                 return true;
             }
         } catch (Exception e) {

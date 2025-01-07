@@ -9,5 +9,6 @@ import lombok.Data;
 @Data
 public class TransferResult {
     private String txId;
+    private String txDetail;
 
 }

@@ -237,7 +237,8 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             }
             Wallet.SendResult sendResult = wallet.sendCoins(req);
             TransferResult txResult = new TransferResult();
-            txResult.setTxId(sendResult.tx.toString());
+            txResult.setTxId(sendResult.tx.getHashAsString());
+            txResult.setTxDetail(sendResult.tx.toString());
             return WalletOpResult.Ok(txResult,SUCCESS);
         } catch (AddressFormatException e) {
             log.error("Address error.",e);
