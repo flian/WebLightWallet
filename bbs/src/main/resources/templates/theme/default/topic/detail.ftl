@@ -58,6 +58,9 @@
                         <#list tags as tag>
                             <a href="/topic/tag/${tag.name}"><span class="badge badge-info">${tag.name}</span></a>
                         </#list>
+                        <#if _user??>
+                            <a href="javascript:void(0)" onclick="openSendCoin(false,'INFINITE_COIN','${topicUser.username}','',1000,'${_user.username}','${_user.token!}')" class="dashang" title="打赏，支持一下">打赏</a>
+                        </#if>
                     </div>
                 </div>
                 <#if _user??>

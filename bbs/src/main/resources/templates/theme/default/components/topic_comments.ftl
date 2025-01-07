@@ -54,6 +54,9 @@
                                             ${comment.content!}
                                         </#if>
                                     </div>
+                                    <#if _user??>
+                                        <a href="javascript:void(0)" onclick="openSendCoin(false,'INFINITE_COIN','${comment.username}','',1000,'${_user.username}','${_user.token!}')" class="dashang" title="打赏，支持一下">打赏</a>
+                                    </#if>
                                 </div>
                             </div>
                             <#if comment?has_next>
