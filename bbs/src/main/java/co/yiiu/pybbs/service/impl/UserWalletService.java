@@ -14,8 +14,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.lotus.webwallet.base.api.enums.WalletEvenType;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +37,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -68,6 +69,8 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
 
     @Value("${web.wallet.rsa.defaultMaxSize:1000}")
     private int maxKeySize;
+
+    private WebWalletEventListenerCallback webWalletEventListenerCallback = new WebWalletEventListenerCallback(this);
 
     @Override
     public CoinRank listTopUsers(SupportedCoins coin, int topN) {
@@ -176,7 +179,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
             ensureWalletRequest.setAccountPrimaryKey(walletKey);
             ensureWalletRequest.setCoin(SupportedCoins.valueOf(requestDto.getCoinSymbol().name()));
             ensureWalletRequest.setPassword(password);
-            WalletOpResult<EnsureWalletResult> walletInfo = webWalletStrategy.ensureWallet(ensureWalletRequest);
+            WalletOpResult<EnsureWalletResult> walletInfo = webWalletStrategy.ensureWallet(ensureWalletRequest,webWalletEventListenerCallback);
             if (walletInfo.isOk()) {
                 userWallet.setWalletKey(walletInfo.getData().getWalletKey());
                 userWallet.setPrimaryAddress(walletInfo.getData().getBase58Address());
@@ -197,7 +200,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
             EnsureWalletRequest request = new EnsureWalletRequest();
             request.setCoin(coin);
             request.setAccountPrimaryKey(userWallet.getWalletKey());
-            WalletOpResult<EnsureWalletResult> result = webWalletStrategy.ensureWallet(request);
+            WalletOpResult<EnsureWalletResult> result = webWalletStrategy.ensureWallet(request,null);
             if (result.isOk()) {
                 userWallet.setBalance(result.getData().getBalance());
                 userWalletMapper.updateById(userWallet);
@@ -205,6 +208,13 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
             }
         }
         return false;
+    }
+
+    protected User getWalletOwnerByWalletKey(String walletKey,SupportedCoins coin){
+        if(ObjectUtils.isEmpty(walletKey) || null == coin){
+            return null;
+        }
+        return userWalletMapper.selectWalletOwnerByWalletKey(walletKey,coin.name());
     }
 
     @Override
@@ -348,7 +358,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
                         WalletBaseRequest request = new WalletBaseRequest();
                         request.setCoin(SupportedCoins.valueOf(wallet.getCoinSymbol()));
                         request.setAccountPrimaryKey(wallet.getWalletKey());
-                        WalletOpResult<WalletBaseResult> walletLoadResult = webWalletStrategy.loadWalletKey(request);
+                        WalletOpResult<WalletBaseResult> walletLoadResult = webWalletStrategy.loadWalletKey(request,webWalletEventListenerCallback);
                         if (null != walletLoadResult && walletLoadResult.isOk()
                                 && walletLoadResult.getData().isWalletExist() && walletLoadResult.getData().isLoaded()) {
                             log.info("load wallet with key success.walletKey:{}", wallet.getWalletKey());
@@ -366,5 +376,30 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         loadWallet();
+    }
+
+    public static final class WebWalletEventListenerCallback implements WalletEventListenerCallback {
+        UserWalletService userWalletService;
+        Set<WalletEvenType> needRefreshEvents = new HashSet(){{
+            add(WalletEvenType.onCoinsReceived);
+            add(WalletEvenType.onCoinsSent);
+            add(WalletEvenType.onTransactionConfidenceChanged);
+        }};
+        public WebWalletEventListenerCallback(UserWalletService userWalletService){
+            this.userWalletService = userWalletService;
+        }
+
+        @Override
+        public void onEvent(WalletEvenType walletEvenType, SupportedCoins coin, String walletKey, Map<String, Object> eventParams) {
+            if(!ObjectUtils.isEmpty(walletKey) && needRefreshEvents.contains(walletEvenType)){
+                User owner = userWalletService.getWalletOwnerByWalletKey(walletKey,coin);
+                if(null != owner){
+                    boolean refresh = userWalletService.refreshCoinBalance(owner,coin);
+                    log.info("refresh user:{} coin:{} wallet with result:{}",owner.getUsername(),coin.name(),refresh);
+                }else {
+                    log.info("can't find owner for wallet, skip refresh. walletKey:{}",walletKey);
+                }
+            }
+        }
     }
 }

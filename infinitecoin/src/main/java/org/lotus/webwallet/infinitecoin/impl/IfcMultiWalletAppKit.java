@@ -20,15 +20,15 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.infinitecoinj.core.*;
-import com.google.infinitecoinj.kits.WalletAppKit;
 import com.google.infinitecoinj.net.discovery.DnsDiscovery;
 import com.google.infinitecoinj.store.BlockStoreException;
 import com.google.infinitecoinj.store.SPVBlockStore;
 import com.google.infinitecoinj.store.WalletProtobufSerializer;
 import lombok.extern.slf4j.Slf4j;
+import org.lotus.webwallet.base.api.WalletEventListenerCallback;
+import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.exceptions.BizException;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -85,8 +85,10 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
     protected boolean blockingStartup = true;
     protected String userAgent, version;
 
+    protected int walletKeysSize = 10000;
+    protected Map<String,IfcWalletAndChainData> walletKeyHashMap = new ConcurrentHashMap<>(walletKeysSize);
 
-    protected Map<String,IfcWalletAndChainData> walletKeyHashMap = new ConcurrentHashMap<>(10000);
+    protected Map<String,IFCWalletEventListener> walletEventListenerMap = new ConcurrentHashMap<>(walletKeysSize);
 
     protected boolean useSingleBlockChainIfo = true;
 
@@ -118,11 +120,11 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
         return result;
     }
 
-    public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere){
-        return ensureLoadWallet(walletKey,defaultPasswordIfNotThere,true);
+    public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere,WalletEventListenerCallback callback){
+        return ensureLoadWallet(walletKey,defaultPasswordIfNotThere,true,callback);
     }
 
-    public Wallet ensureLoadWallet(String walletKey,String defaultPasswordIfNotThere,boolean createIfNotFound){
+    public Wallet ensureLoadWallet(String walletKey, String defaultPasswordIfNotThere, boolean createIfNotFound, WalletEventListenerCallback callback){
         if(ObjectUtils.isEmpty(walletKey)){
             throw new BizException("wallet key is null,try a new name?.for key:"+walletKey);
         }
@@ -160,7 +162,9 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                 if (useAutoSave) newWallet.autosaveToFile(newWalletFile, 1, TimeUnit.SECONDS, null);
                 //fist create and save now ensure no data lost.
                 newWallet.saveToFile(newWalletFile);
-
+                if(null != callback && !walletEventListenerMap.containsKey(walletKey)){
+                    newWallet.addEventListener(new IFCWalletEventListener(SupportedCoins.INFINITE_COIN,walletKey,callback));
+                }
                 result = newWalletData.getWallet();
                 vMainChain.addWallet(newWallet);
                 vPeerGroup.addWallet(newWallet);

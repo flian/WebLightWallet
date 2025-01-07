@@ -2,6 +2,7 @@ package org.lotus.webwallet.base.impl;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.WebWalletApi;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
@@ -49,7 +50,7 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
+    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request, WalletEventListenerCallback eventListenerCallback) {
         if (null == request.getCoin()) {
             throw new IllegalArgumentException("coin is required");
         }
@@ -61,11 +62,11 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
         }
         WebWalletApi webWalletApi = getWebWalletByCoin(request.getCoin().name());
 
-        return webWalletApi.ensureWallet(request);
+        return webWalletApi.ensureWallet(request,eventListenerCallback);
     }
 
     @Override
-    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request) {
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request,WalletEventListenerCallback eventListenerCallback) {
         if (null == request.getCoin()) {
             throw new IllegalArgumentException("coin is required");
         }
@@ -74,7 +75,7 @@ public class WebWalletStrategy extends BaseAbstractWebWallet {
         }
         WebWalletApi webWalletApi = getWebWalletByCoin(request.getCoin().name());
 
-        return webWalletApi.loadWalletKey(request);
+        return webWalletApi.loadWalletKey(request,eventListenerCallback);
     }
 
     @Override

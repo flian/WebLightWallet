@@ -4,4 +4,9 @@
 <select id="selectUserWalletByUserAndCoin" resultType="co.yiiu.pybbs.model.UserWallet">
     select * from user_wallet where username=#{username} and coin_symbol=#{coinSymbol}
 </select>
+
+    <select id="selectWalletOwnerByWalletKey" resultType="co.yiiu.pybbs.model.User">
+        select u.* from user_wallet w left join user u on w.username = u.username
+                   where w.wallet_key=#{walletKey} and w.coin_symbol=#{coinSymbol}
+    </select>
 </mapper>

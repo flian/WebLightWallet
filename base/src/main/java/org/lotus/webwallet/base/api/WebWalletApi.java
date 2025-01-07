@@ -27,17 +27,19 @@ public interface WebWalletApi {
      * if wallet exist return wallet summary info
      * if not exist create one
      * @param request wallet request
+     * @param eventListenerCallback wallet call back
      * @return wallet info
      */
-    WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request);
+    WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request,WalletEventListenerCallback eventListenerCallback);
 
     /**
      * just ensure given wallet key is ready.
      * if wallet is not there, not create one,just info result.
      * @param request wallet key
+     * @param eventListenerCallback wallet change call back
      * @return true if load ok
      */
-    WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request);
+    WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request,WalletEventListenerCallback eventListenerCallback);
 
     /**
      * get a public address for account

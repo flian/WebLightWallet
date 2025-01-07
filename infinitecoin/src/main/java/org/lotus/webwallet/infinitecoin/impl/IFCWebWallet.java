@@ -7,6 +7,7 @@ import com.google.infinitecoinj.params.TestNet3Params;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.config.WebWalletFileConfigProperties;
@@ -96,13 +97,13 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
+    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request,WalletEventListenerCallback eventListenerCallback) {
         if(supportCoin(request.getCoin())){
             if(ObjectUtils.isEmpty(request.getAccountPrimaryKey())){
                return WalletOpResult.fail("accountPrimaryKey is not allow empty.");
             }
             String walletKey = ObjectUtils.isEmpty(request.getPreferWalletKey())?request.getAccountPrimaryKey():String.format("%s_%s",request.getAccountPrimaryKey(),request.getPreferWalletKey());
-            Wallet wallet = getWalletByKey(walletKey,request.getPassword());
+            Wallet wallet = getWalletByKey(walletKey,request.getPassword(),eventListenerCallback);
             WalletBaseResult baseResult = genCommonResult(walletKey,wallet);
             EnsureWalletResult ensureWalletResult = new EnsureWalletResult();
             BeanUtils.copyProperties(baseResult,ensureWalletResult);
@@ -112,10 +113,10 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request) {
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest request, WalletEventListenerCallback eventListenerCallback) {
         WalletOpResult<WalletBaseResult> result = WalletOpResult.fail(WalletOpResultEnum.FAIL,"");
         if(supportCoin(request.getCoin())) {
-            Wallet wallet = infiniteCoinMainKit.ensureLoadWallet(request.getAccountPrimaryKey(), "",false);
+            Wallet wallet = infiniteCoinMainKit.ensureLoadWallet(request.getAccountPrimaryKey(), "",false,eventListenerCallback);
             if(null != wallet){
                 result.setData(genCommonResult(request.getAccountPrimaryKey(),wallet));
                 result.getData().setWalletExist(true);
@@ -129,8 +130,8 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
         return result;
     }
 
-    private Wallet getWalletByKey(String key,String password){
-        return infiniteCoinMainKit.ensureLoadWallet(key,password);
+    private Wallet getWalletByKey(String key,String password,WalletEventListenerCallback eventListenerCallback){
+        return infiniteCoinMainKit.ensureLoadWallet(key,password,eventListenerCallback);
     }
 
     private WalletBaseResult genCommonResult(String walletKey,Wallet wallet){
@@ -153,7 +154,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     @Override
     public String getAddress( WalletBaseRequest baseRequest) {
         if(supportCoin(baseRequest.getCoin())){
-            Wallet wallet = getWalletByKey(baseRequest.getAccountPrimaryKey(),baseRequest.getPassword());
+            Wallet wallet = getWalletByKey(baseRequest.getAccountPrimaryKey(),baseRequest.getPassword(),null);
             return wallet.getChangeAddress().toString();
         }
         return null;
@@ -204,7 +205,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
                 log.error("min send 1000ifc for now, it will be trande as dust lest than 1000 and confirm..");
                 return WalletOpResult.fail("min 1000 ifc to transfer, other wise will be trade as dust..");
             }
-            wallet = getWalletByKey(baseRequest.getAccountPrimaryKey(),baseRequest.getPassword());
+            wallet = getWalletByKey(baseRequest.getAccountPrimaryKey(),baseRequest.getPassword(),null);
             BigDecimal balance = getHumReadableBalance(wallet);
             if(balance.compareTo(amount) < 0){
                 log.error("not sufficient funds,balance:{},transfer amount:{}",balance,amount);

@@ -1,5 +1,6 @@
 package org.lotus.webwallet.base.impl;
 
+import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,12 @@ public class DefaultNotSupportCoinWebWallet extends BaseAbstractWebWallet {
     }
 
     @Override
-    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request) {
+    public WalletOpResult<EnsureWalletResult> ensureWallet(EnsureWalletRequest request, WalletEventListenerCallback eventListenerCallback) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest baseRequest) {
+    public WalletOpResult<WalletBaseResult> loadWalletKey(WalletBaseRequest baseRequest,WalletEventListenerCallback eventListenerCallback) {
         throw new UnsupportedOperationException();
     }
 
