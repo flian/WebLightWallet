@@ -40,9 +40,7 @@ function openSendCoin(send,coin,toUser,toAddress,amount,me,token){
         content:$("#_sendCoinFormDiv"),
         btn:['发送','取消'],
         yes:()=>{
-            if(checkAndSendCoin(me,token)){
-                suc("发送硬币成功~");
-            }
+            checkAndSendCoin(me,token);
         }
     });
 }
@@ -71,6 +69,7 @@ function checkAndSendCoin(me,token){
         //reset password filed after one call
         $("#_sendCoinPassword").val('');
         if(trsResult.code === 200){
+            suc("发送硬币成功~");
             return true;
         }else {
             err(trsResult.description);
