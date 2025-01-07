@@ -71,9 +71,6 @@ function checkAndSendCoin(me,token){
         //reset password filed after one call
         $("#_sendCoinPassword").val('');
         if(trsResult.code === 200){
-            setTimeout(function () {
-                window.location.reload();
-            }, 2000);
             return true;
         }else {
             err(trsResult.description);
