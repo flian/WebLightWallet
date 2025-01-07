@@ -55,7 +55,9 @@
                                         </#if>
                                     </div>
                                     <#if _user??>
-                                        <a href="javascript:void(0)" onclick="openSendCoin(false,'INFINITE_COIN','${comment.username}','',1000,'${_user.username}','${_user.token!}')" class="dashang" title="打赏，支持一下">打赏</a>
+                                        <#if comment.commentUserCoinWalletMap['INFINITE_COIN']??>
+                                            <a href="javascript:void(0)" onclick="openSendCoin(false,'INFINITE_COIN','${comment.username}','${comment.commentUserCoinWalletMap.INFINITE_COIN.primaryAddress}',1000,'${_user.username}','${_user.token!}')" class="dashang" title="打赏，支持一下">打赏</a>
+                                        </#if>
                                     </#if>
                                 </div>
                             </div>

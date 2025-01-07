@@ -1,13 +1,12 @@
 package co.yiiu.pybbs.controller.front;
 
-import co.yiiu.pybbs.model.Collect;
-import co.yiiu.pybbs.model.Tag;
-import co.yiiu.pybbs.model.Topic;
-import co.yiiu.pybbs.model.User;
+import co.yiiu.pybbs.controller.api.vo.UserWalletInfo;
+import co.yiiu.pybbs.model.*;
 import co.yiiu.pybbs.service.ICollectService;
 import co.yiiu.pybbs.service.ITagService;
 import co.yiiu.pybbs.service.ITopicService;
 import co.yiiu.pybbs.service.IUserService;
+import co.yiiu.pybbs.service.impl.UserWalletService;
 import co.yiiu.pybbs.util.IpUtil;
 import co.yiiu.pybbs.util.MyPage;
 import co.yiiu.pybbs.util.SensitiveWordUtil;
@@ -41,6 +40,7 @@ public class TopicController extends BaseController {
     private ITagService tagService;
     @Resource
     private IUserService userService;
+
     @Resource
     private ICollectService collectService;
 
@@ -54,6 +54,7 @@ public class TopicController extends BaseController {
         List<Tag> tags = tagService.selectByTopicId(id);
         // 查询话题的作者信息
         User topicUser = userService.selectById(topic.getUserId());
+
         // 查询话题有多少收藏
         List<Collect> collects = collectService.selectByTopicId(id);
         // 如果自己登录了，查询自己是否收藏过这个话题
@@ -69,9 +70,12 @@ public class TopicController extends BaseController {
         // 对内容进行过滤
         topic.setContent(SensitiveWordUtil.replaceSensitiveWord(topic.getContent(), "*", SensitiveWordUtil.MinMatchType));
 
+        Map<String,UserWalletInfo>  topicUesrCoinWalletMap = userService.userWallet(topicUser.getUsername());
+
         model.addAttribute("topic", topic);
         model.addAttribute("tags", tags);
         model.addAttribute("topicUser", topicUser);
+        model.addAttribute("topicUserCoinWalletMap",topicUesrCoinWalletMap);
         model.addAttribute("collects", collects);
         return render("topic/detail");
     }

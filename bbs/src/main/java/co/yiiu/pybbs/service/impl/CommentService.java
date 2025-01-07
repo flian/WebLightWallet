@@ -62,6 +62,7 @@ public class CommentService implements ICommentService {
         for (CommentsByTopic commentsByTopic : commentsByTopics) {
             commentsByTopic.setContent(SensitiveWordUtil.replaceSensitiveWord(commentsByTopic.getContent(), "*",
                     SensitiveWordUtil.MinMatchType));
+            commentsByTopic.setCommentUserCoinWalletMap(userService.userWallet(commentsByTopic.getUsername()));
         }
         return commentsByTopics;
     }
