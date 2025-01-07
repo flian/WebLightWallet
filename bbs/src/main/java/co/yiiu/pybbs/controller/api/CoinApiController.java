@@ -13,6 +13,8 @@ import co.yiiu.pybbs.service.vo.TransferCoinRequestDto;
 import co.yiiu.pybbs.service.vo.WalletKeyAndPasswordInfoInitRequestDto;
 import co.yiiu.pybbs.service.vo.WalletResetPasswordRequestDto;
 import co.yiiu.pybbs.util.Result;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.springframework.util.ObjectUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : foy
@@ -36,6 +39,10 @@ public class CoinApiController extends BaseApiController {
 
     @Resource
     private IUserService userService;
+
+    private static Cache<String, Integer> uuidUssedCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(30, TimeUnit.MINUTES).maximumSize(10000).build();
+
 
     protected List<UserCoinInfoResult> defaultCoinsStatus(){
         List<UserCoinInfoResult> resultList = new ArrayList<>();
@@ -141,6 +148,11 @@ public class CoinApiController extends BaseApiController {
             log.error("invalid coin type.");
             return error("invalid coin type.");
         }
+        if(uuidUssedCache.getIfPresent(transferCoinAmountRequest.getUuid()) != null){
+            log.error("duplicate submit form.");
+            return error("duplicate,seems you already send to coin, please try again.");
+        }
+
         SupportedCoins currentCoin = SupportedCoins.valueOf(transferCoinAmountRequest.getCoinSymbol());
         UserWallet userWallet = userWalletService.selectUserWalletByUserAndCoin(me.getUsername(),currentCoin);
         if(userWallet.getAvailableAmount() < transferCoinAmountRequest.getAmount()){
@@ -155,6 +167,7 @@ public class CoinApiController extends BaseApiController {
         toRequestDto.setPubIdxKey(transferCoinAmountRequest.getPubIdxKey());
         toRequestDto.setEncryptedPassword(transferCoinAmountRequest.getEncryptedPassword());
         if(userWalletService.transferCoin(me,toRequestDto)){
+            uuidUssedCache.put(transferCoinAmountRequest.getUuid(),0);
             return success();
         }
         return error("密码错误，发送失败！！");
