@@ -24,7 +24,7 @@
     <select id="countToday" resultType="integer">
         select count(1)
         from tag
-        where in_time between curdate() and date_add(curdate(), interval 1 day) and t.is_deleted=0
+        where in_time between curdate() and date_add(curdate(), interval 1 day) and tag.is_deleted=0
     </select>
 
 </mapper>

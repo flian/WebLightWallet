@@ -21,7 +21,10 @@ spring:
   #default disable flyway
   flyway:
     enabled: false
-
+web:
+  wallet:
+    rsa:
+      enabled: true
 #  resources:
 #    static-locations: ["classpath:static/", "file:./static/"]
 

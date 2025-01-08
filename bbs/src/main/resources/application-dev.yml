@@ -6,7 +6,7 @@ site:
 web:
   wallet:
     rsa:
-      enabled: false
+      enabled: true
     ifc:
       #regtest net node ip
       regtestHost: 192.168.1.14
