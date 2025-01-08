@@ -10,7 +10,7 @@ CREATE TABLE `user_wallet`
     `balance`       decimal(40, 10)       default 0,
     `locked_amount` decimal(40, 10)       default 0,
     `primary_address` varchar(255) NOT NULL,
-    `encrypted_password`     text DEFAULT '',
+    `encrypted_password`     text,
     `pub_idx_key` varchar(255) DEFAULT '',
     `saved_wallet_password` tinyint NOT NULL  DEFAULT 0,
     PRIMARY KEY (`id`),

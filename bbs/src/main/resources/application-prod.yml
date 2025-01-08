@@ -1,9 +1,17 @@
 spring:
   banner:
     location: file:./banner.txt
-
+  flyway:
+    enabled: false
 site:
   datasource_driver: com.mysql.cj.jdbc.Driver
-  datasource_url: jdbc:mysql://localhost:3306/ifc_bbs?useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+  datasource_url: jdbc:mysql://localhost:3306/ifc_bbs_prod?useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
   datasource_username: root
-  datasource_password:
+  datasource_password: Admin123
+
+web:
+  wallet:
+    rsa:
+      enabled: true
+    ifc:
+      net: main
