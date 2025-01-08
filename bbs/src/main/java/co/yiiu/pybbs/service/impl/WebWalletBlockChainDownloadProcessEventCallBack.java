@@ -6,7 +6,6 @@ import org.lotus.webwallet.base.api.enums.SupportedCoins;
 import org.lotus.webwallet.base.api.enums.WalletBlockChainDownloadProcessType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -16,9 +15,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class WebWalletBlockChainDownloadProcessEventCallBack implements WalletBlockChainDownloadProcessEventCallback {
-
-    @Resource
-    private UserWalletService userWalletService;
 
     @Override
     public void onEvent(WalletBlockChainDownloadProcessType walletEvenType, SupportedCoins coin, String walletKey, Map<String, Object> eventParams) {
