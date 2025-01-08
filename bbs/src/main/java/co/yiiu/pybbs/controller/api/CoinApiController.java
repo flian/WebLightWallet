@@ -156,6 +156,9 @@ public class CoinApiController extends BaseApiController {
 
         SupportedCoins currentCoin = SupportedCoins.valueOf(transferCoinAmountRequest.getCoinSymbol());
         UserWallet userWallet = userWalletService.selectUserWalletByUserAndCoin(me.getUsername(),currentCoin);
+        if(null == userWallet){
+            return error("您还没有开通IFC钱包，个人中心->设置->IFC钱包设置开通");
+        }
         if((userWallet.getAvailableAmount() - userWalletService.minCoinLockForFee(currentCoin).doubleValue()) < transferCoinAmountRequest.getAmount()){
             return error("余额不足。最多可转:"+(userWallet.getAvailableAmount() - userWalletService.minCoinLockForFee(currentCoin).doubleValue()));
         }
