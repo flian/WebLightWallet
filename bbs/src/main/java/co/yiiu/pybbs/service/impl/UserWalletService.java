@@ -30,6 +30,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -55,6 +56,10 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
 
     private static KeyPairGenerator RSA_GENERATEOR = null;
 
+    private static final Map<SupportedCoins, BigInteger> MIN_FEE_LOCK_FOR_COIN = new HashMap(){{
+        put(SupportedCoins.INFINITE_COIN,BigInteger.valueOf(2));
+    }};
+
     @Resource
     private RsaPrivatePubKeyMapper rsaPrivatePubKeyMapper;
 
@@ -71,6 +76,11 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
     private int maxKeySize;
 
     private WebWalletEventListenerCallback webWalletEventListenerCallback = new WebWalletEventListenerCallback(this);
+
+    @Override
+    public BigInteger minCoinLockForFee(SupportedCoins coin) {
+        return MIN_FEE_LOCK_FOR_COIN.getOrDefault(coin, BigInteger.TEN);
+    }
 
     @Override
     public CoinRank listTopUsers(SupportedCoins coin, int topN) {

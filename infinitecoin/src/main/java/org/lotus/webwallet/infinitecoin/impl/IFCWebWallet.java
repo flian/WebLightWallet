@@ -134,6 +134,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
         if(supportCoin(request.getCoin())) {
             Wallet wallet = infiniteCoinMainKit.ensureLoadWallet(request.getAccountPrimaryKey(), "",false,eventListenerCallback);
             if(null != wallet){
+                result.setCode(WalletOpResultEnum.SUCCESS);
                 result.setData(genCommonResult(request.getAccountPrimaryKey(),wallet));
                 result.getData().setWalletExist(true);
                 result.getData().setLoaded(true);
@@ -243,6 +244,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             req.fee = DEFAULT_FEE;
             req.feePerKb = DEFAULT_FEE_PER_KB;
             req.emptyWallet = false;
+            req.ensureMinRequiredFee = false;
             Address changeAddress = wallet.getChangeAddress();
             if(valid2Address(base58ChangeAddress,baseRequest.getCoin())){
                 changeAddress = new Address(infiniteCoinMainKit.params,base58ChangeAddress);
@@ -259,10 +261,10 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             return WalletOpResult.Ok(txResult,SUCCESS);
         } catch (AddressFormatException e) {
             log.error("Address error.",e);
-            throw new RuntimeException(e);
+            return WalletOpResult.fail(e.getMessage());
         } catch (InsufficientMoneyException e) {
             log.error("exception send coin.",e);
-            throw new RuntimeException(e);
+            return WalletOpResult.fail(e.getMessage());
         }
     }
 

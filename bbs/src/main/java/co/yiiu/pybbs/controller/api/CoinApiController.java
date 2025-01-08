@@ -21,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -155,9 +156,15 @@ public class CoinApiController extends BaseApiController {
 
         SupportedCoins currentCoin = SupportedCoins.valueOf(transferCoinAmountRequest.getCoinSymbol());
         UserWallet userWallet = userWalletService.selectUserWalletByUserAndCoin(me.getUsername(),currentCoin);
-        if(userWallet.getAvailableAmount() < transferCoinAmountRequest.getAmount()){
-            return error("余额不足。");
+        if((userWallet.getAvailableAmount() - userWalletService.minCoinLockForFee(currentCoin).doubleValue()) < transferCoinAmountRequest.getAmount()){
+            return error("余额不足。最多可转:"+(userWallet.getAvailableAmount() - userWalletService.minCoinLockForFee(currentCoin).doubleValue()));
         }
+        BigInteger dustMinAmount = SupportedCoins.dustAmount(currentCoin);
+        if(transferCoinAmountRequest.getAmount() <= dustMinAmount.doubleValue()){
+            //dust amount transfer
+            return error("【粉尘攻击判定】转账最小金额:"+dustMinAmount);
+        }
+
         TransferCoinRequestDto toRequestDto = new TransferCoinRequestDto();
         toRequestDto.setCoins(currentCoin);
         User toUser = userService.selectByUsername(transferCoinAmountRequest.getToUserName());

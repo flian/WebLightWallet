@@ -7,6 +7,7 @@ import co.yiiu.pybbs.service.vo.*;
 import org.lotus.webwallet.base.api.dto.CoinNetInfo;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -14,6 +15,13 @@ import java.util.List;
  * @date : 2025/1/2:20:50
  **/
 public interface IUserWalletService {
+
+    /**
+     * min lock for fee
+     * @param coin coin
+     * @return min need lock for amount
+     */
+    BigInteger minCoinLockForFee(SupportedCoins coin);
 
     /**
      * top n user for supported coins

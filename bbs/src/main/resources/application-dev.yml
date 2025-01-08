@@ -20,3 +20,6 @@ mybatis-plus:
 spring:
   flyway:
     enabled: false
+logging:
+  level:
+    co.yiiu.pybbs: debug
