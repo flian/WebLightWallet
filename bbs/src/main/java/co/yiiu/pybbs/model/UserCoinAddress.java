@@ -13,7 +13,7 @@ import java.io.Serializable;
  **/
 @Getter
 @Setter
-public class UserCoinAddress implements Serializable {
+public class UserCoinAddress extends BaseEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String label;

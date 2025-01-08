@@ -8,7 +8,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Collect implements Serializable {
+public class Collect extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 7610730966340643542L;
     private Integer topicId;

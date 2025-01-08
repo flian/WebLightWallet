@@ -11,7 +11,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Code implements Serializable {
+public class Code extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -6008460350253418202L;
     @TableId(type = IdType.AUTO)

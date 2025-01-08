@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Role implements Serializable {
+public class Role extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 7824693669858106664L;
     @TableId(type = IdType.AUTO)
     private Integer id;

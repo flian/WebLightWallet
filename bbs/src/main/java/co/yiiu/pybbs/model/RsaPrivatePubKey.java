@@ -13,7 +13,7 @@ import java.io.Serializable;
  **/
 @Getter
 @Setter
-public class RsaPrivatePubKey implements Serializable {
+public class RsaPrivatePubKey extends BaseEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String privateKey;

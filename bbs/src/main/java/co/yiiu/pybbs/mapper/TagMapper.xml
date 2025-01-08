@@ -17,14 +17,14 @@
                  left join topic t on tt.topic_id = t.id
                  left join tag tag on tt.tag_id = tag.id
                  left join user u on t.user_id = u.id
-        where tag.id = #{tagId}
+        where tag.id = #{tagId} and t.is_deleted=0
         order by tag.topic_count desc
     </select>
 
     <select id="countToday" resultType="integer">
         select count(1)
         from tag
-        where in_time between curdate() and date_add(curdate(), interval 1 day)
+        where in_time between curdate() and date_add(curdate(), interval 1 day) and t.is_deleted=0
     </select>
 
 </mapper>

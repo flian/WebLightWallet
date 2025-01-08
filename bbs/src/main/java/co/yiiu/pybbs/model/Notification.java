@@ -12,7 +12,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Notification implements Serializable {
+public class Notification extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 3235461023789820336L;
 
     @TableId(type = IdType.AUTO)

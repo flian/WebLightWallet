@@ -16,6 +16,9 @@
         from topic t
         left join user u on t.user_id = u.id
         <where>
+            <if test="1=1">
+                t.is_deleted=0
+            </if>
             <if test="tab == 'good'">
                 t.good = true
             </if>
@@ -42,7 +45,7 @@
         left join topic_tag tt on tt.topic_id = t.id
         left join tag tag on tag.id = tt.tag_id
         <where>
-            tag.name = #{tag}
+            tag.name = #{tag} and t.is_deleted=0
         </where>
         order by t.top desc, t.in_time desc
     </select>
@@ -51,7 +54,7 @@
         select t.*, u.username, u.avatar
         from topic t
         left join user u on t.user_id = u.id
-        where t.user_id = #{userId}
+        where t.user_id = #{userId} and t.is_deleted=0
         order by t.in_time desc
     </select>
 
@@ -73,7 +76,7 @@
     <select id="countToday" resultType="integer">
         select count(1)
         from topic t
-        where t.in_time between curdate() and date_add(curdate(), interval 1 day)
+        where t.in_time between curdate() and date_add(curdate(), interval 1 day) and t.is_deleted=0
     </select>
 
     <select id="search" resultType="map">
@@ -81,6 +84,7 @@
         from topic t
         <where>
             t.title like concat(concat('%',#{keyword}),'%') or t.content like concat(concat('%',#{keyword}),'%')
+        and t.is_deleted=0
         </where>
         order by t.in_time desc
     </select>

@@ -15,7 +15,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class User implements Serializable {
+public class User extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -5051120337175047163L;
 

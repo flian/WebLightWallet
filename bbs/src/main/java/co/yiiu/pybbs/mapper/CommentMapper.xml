@@ -17,7 +17,7 @@
                  left join topic t on t.id = c.topic_id
                  left join user u on t.user_id = u.id
                  left join user uu on c.user_id = uu.id
-        where c.user_id = #{userId}
+        where c.user_id = #{userId} and t.is_deleted=0
         order by t.in_time desc
     </select>
 
@@ -25,7 +25,7 @@
         select c.*, u.username, u.avatar, 0 as layer
         from comment c
                  left join user u on c.user_id = u.id
-        where c.topic_id = #{topicId}
+        where c.topic_id = #{topicId} and t.is_deleted=0
         order by c.in_time asc;
     </select>
 
@@ -48,7 +48,7 @@
     <select id="countToday" resultType="integer">
         select count(1)
         from comment
-        where in_time between curdate() and date_add(curdate(), interval 1 day)
+        where in_time between curdate() and date_add(curdate(), interval 1 day) and t.is_deleted=0
     </select>
 
 </mapper>

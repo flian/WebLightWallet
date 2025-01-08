@@ -15,7 +15,7 @@ import java.util.Date;
  * https://atjiu.github.io
  */
 @TableName("oauth_user")
-public class OAuthUser implements Serializable {
+public class OAuthUser extends BaseEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Integer id;

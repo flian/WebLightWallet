@@ -15,7 +15,7 @@ import java.math.RoundingMode;
  **/
 @Getter
 @Setter
-public class UserWallet implements Serializable {
+public class UserWallet extends BaseEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String username;
