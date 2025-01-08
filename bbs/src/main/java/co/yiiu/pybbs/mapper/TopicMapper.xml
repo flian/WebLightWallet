@@ -16,18 +16,20 @@
         from topic t
         left join user u on t.user_id = u.id
         <where>
+            t.is_deleted = 0
             <if test="tab == 'good'">
-                t.good = true
+                and t.good = true
             </if>
             <if test="tab == 'noanswer'">
-                t.comment_count = 0
+                and t.comment_count = 0
             </if>
             <if test="tab == 'hot'">
-                date(t.in_time) &lt;= date_add(curdate(), interval 1 day)
+                and date(t.in_time) &lt;= date_add(curdate(), interval 1 day)
                 and date(t.in_time) &gt;= date_sub(curdate(), interval 7 day)
             </if>
+
         </where>
-         and t.is_deleted = 0
+
         <if test="tab == 'all' or tab == 'newest' or tab == 'noanswer' or tab == 'good'">
             order by t.top desc, t.in_time desc
         </if>
