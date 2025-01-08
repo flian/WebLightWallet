@@ -82,7 +82,10 @@
   <logger name="java.sql.PreparedStatement" level="DEBUG"/>
   <logger name="co.yiiu.pybbs" level="DEBUG"/>
   <logger name="org.lotus.webwallet" level="DEBUG"/>
-
+  <logger name="com.google.infinitecoinj.net.discovery" level="OFF"/>
+  <logger name="com.google.infinitecoinj.net" level="OFF"/>
+  <logger name="com.google.infinitecoinj.core.PeerGroup" level="OFF"/>
+  <logger name="com.google.infinitecoinj.core.PeerSocketHandler" level="OFF"/>
   <root level="info" additivity="true">
     <appender-ref ref="console"/>
     <!--<appender-ref ref="console_debug" />-->
