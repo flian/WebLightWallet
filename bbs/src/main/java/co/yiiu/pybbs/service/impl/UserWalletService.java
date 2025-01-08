@@ -347,7 +347,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
     protected void loadWallet() {
         //ensure wallet load
         QueryWrapper<UserWallet> queryWrapper = new QueryWrapper<>();
-        int totalCount = userWalletMapper.selectCount(queryWrapper);
+        int totalCount = userWalletMapper.selectCount(queryWrapper).intValue();
         int pageSize = 1000;
         int totalPage = totalCount / pageSize + totalCount % pageSize;
         if (totalCount > 0) {

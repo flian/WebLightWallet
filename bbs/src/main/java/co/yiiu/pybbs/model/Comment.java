@@ -11,7 +11,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Comment implements Serializable {
+public class Comment extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 8413239906874427490L;
 
     @TableId(type = IdType.AUTO)
@@ -27,6 +27,8 @@ public class Comment implements Serializable {
     private Integer tgMessageId;
     // true: 通过，false: 审核中
     private Boolean status;
+
+
 
     public String getStyle() {
         return style;

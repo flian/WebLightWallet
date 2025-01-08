@@ -11,7 +11,7 @@ import java.util.Date;
  * Copyright (c) 2018, All Rights Reserved.
  * https://atjiu.github.io
  */
-public class Topic implements Serializable {
+public class Topic extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,6 +35,11 @@ public class Topic implements Serializable {
     private Boolean good;
     // 点赞用户的id英文,隔开的，要计算被多少人点赞过，可以通过英文,分隔这个字符串计算数量
     private String upIds;
+
+
+
+
+
 
     public String getStyle() {
         return style;

@@ -30,6 +30,7 @@ CREATE TABLE `admin_user` (
   `password` varchar(255) NOT NULL DEFAULT '',
   `in_time` datetime NOT NULL,
   `role_id` int(11) NOT NULL,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `role_id` (`role_id`),
@@ -60,6 +61,7 @@ CREATE TABLE `code` (
   `expire_time` datetime NOT NULL,
   `email` varchar(255) NOT NULL DEFAULT '',
   `used` bit(1) NOT NULL DEFAULT b'0',
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`),
   KEY `user_id` (`user_id`),
@@ -77,8 +79,10 @@ CREATE TABLE `collect` (
   `topic_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `in_time` datetime NOT NULL,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   KEY `topic_id` (`topic_id`),
   KEY `user_id` (`user_id`),
+
   CONSTRAINT `collect_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`id`),
   CONSTRAINT `collect_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -98,6 +102,7 @@ CREATE TABLE `comment` (
   `in_time` datetime NOT NULL,
   `comment_id` int(11) DEFAULT NULL,
   `up_ids` text,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `topic_id` (`topic_id`),
   KEY `user_id` (`user_id`),
@@ -121,10 +126,12 @@ CREATE TABLE `notification` (
   `in_time` datetime NOT NULL,
   `read` bit(1) NOT NULL DEFAULT b'0',
   `content` longtext,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `topic_id` (`topic_id`),
   KEY `user_id` (`user_id`),
   KEY `target_user_id` (`target_user_id`),
+
   CONSTRAINT `notification_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`id`),
   CONSTRAINT `notification_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `notification_ibfk_3` FOREIGN KEY (`target_user_id`) REFERENCES `user` (`id`)
@@ -213,6 +220,7 @@ DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -388,6 +396,7 @@ CREATE TABLE `tag` (
   `icon` varchar(255) DEFAULT NULL,
   `topic_count` int(11) NOT NULL DEFAULT '0',
   `in_time` datetime NOT NULL,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -412,6 +421,7 @@ CREATE TABLE `topic` (
   `top` bit(1) NOT NULL DEFAULT b'0',
   `good` bit(1) NOT NULL DEFAULT b'0',
   `up_ids` text,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `title` (`title`),
   KEY `user_id` (`user_id`),
@@ -454,6 +464,7 @@ CREATE TABLE `user` (
   `token` varchar(255) NOT NULL DEFAULT '',
   `telegram_name` varchar(255) DEFAULT NULL,
   `email_notification` bit(1) NOT NULL DEFAULT b'0',
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `token` (`token`)
@@ -476,6 +487,7 @@ CREATE TABLE `oauth_user` (
   `bio` text,
   `email` varchar(255) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `oauth_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)

@@ -133,7 +133,7 @@ public class CollectService implements ICollectService {
     public int countByUserId(Integer userId) {
         QueryWrapper<Collect> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(Collect::getUserId, userId);
-        return collectMapper.selectCount(wrapper);
+        return collectMapper.selectCount(wrapper).intValue();
     }
 
     // 查询用户收藏的话题
