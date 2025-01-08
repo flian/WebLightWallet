@@ -57,7 +57,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
                         @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost,
                         @Value("${web.wallet.ifc.minFee:1}") String minFee,
                         @Value("${web.wallet.ifc.minFeePerKb:1}") String minFeePerKb,
-                        @Value("${web.wallet.ifc.loadCheckPoint:true") boolean loadCheckPoint,
+                        @Value("${web.wallet.ifc.loadCheckPointForMainNet:true") boolean loadCheckPoint,
                         WalletBlockChainDownloadProcessEventCallback walletBlockChainDownloadProcessEventCallback,
                         WebWalletFileConfigProperties webWalletFileConfigProperties){
         this.webWalletFileConfigProperties = webWalletFileConfigProperties;
