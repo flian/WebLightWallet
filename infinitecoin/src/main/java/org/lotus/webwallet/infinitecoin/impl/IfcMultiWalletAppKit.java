@@ -90,6 +90,7 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
 
     protected Map<String,IFCWalletEventListener> walletEventListenerMap = new ConcurrentHashMap<>(walletKeysSize);
 
+
     protected boolean useSingleBlockChainIfo = true;
 
     protected String defaultMainPassword = "thisIsTestPasswordPlsChangeit123!";
@@ -165,6 +166,7 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
                 if(null != callback && !walletEventListenerMap.containsKey(walletKey)){
                     newWallet.addEventListener(new IFCWalletEventListener(SupportedCoins.INFINITE_COIN,walletKey,callback));
                 }
+
                 result = newWalletData.getWallet();
                 vMainChain.addWallet(newWallet);
                 vPeerGroup.addWallet(newWallet);
@@ -313,6 +315,7 @@ public class IfcMultiWalletAppKit extends AbstractIdleService {
             }
             vMainChain = new BlockChain(params, vMainStore);
             vPeerGroup = createPeerGroup();
+            vPeerGroup.setBloomFilterFalsePositiveRate(0.0001);
             if (this.userAgent != null)
                 vPeerGroup.setUserAgent(userAgent, version);
             if (vWalletFile.exists()) {

@@ -7,6 +7,7 @@ import com.google.infinitecoinj.params.TestNet3Params;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.lotus.webwallet.base.api.WalletBlockChainDownloadProcessEventCallback;
 import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
@@ -34,6 +35,7 @@ import static com.google.infinitecoinj.core.CoinDefinition.DUST_LIMIT;
 public class IFCWebWallet extends BaseAbstractWebWallet {
 
     private final WebWalletFileConfigProperties webWalletFileConfigProperties;
+    private final WalletBlockChainDownloadProcessEventCallback walletBlockChainDownloadProcessEventCallback;
 
     public static final String REG_TEST_NET = "regtest";
     private static final String TEST_NET = "test";
@@ -46,6 +48,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     private  String regtestHost = "127.0.0.1";
 
     private  final String ifcNet;
+    private final boolean loadCheckPoint;
 
     protected final NetworkParameters networkParameters;
     protected final IfcMultiWalletAppKit infiniteCoinMainKit;
@@ -54,9 +57,13 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
                         @Value("${web.wallet.ifc.regtestHost:127.0.0.1}") String regHost,
                         @Value("${web.wallet.ifc.minFee:1}") String minFee,
                         @Value("${web.wallet.ifc.minFeePerKb:1}") String minFeePerKb,
+                        @Value("${web.wallet.ifc.loadCheckPoint:true") boolean loadCheckPoint,
+                        WalletBlockChainDownloadProcessEventCallback walletBlockChainDownloadProcessEventCallback,
                         WebWalletFileConfigProperties webWalletFileConfigProperties){
         this.webWalletFileConfigProperties = webWalletFileConfigProperties;
+        this.walletBlockChainDownloadProcessEventCallback = walletBlockChainDownloadProcessEventCallback;
         this.ifcNet = net;
+        this.loadCheckPoint=loadCheckPoint;
         DEFAULT_FEE = Utils.toNanoCoins(minFee);
         DEFAULT_FEE_PER_KB =  Utils.toNanoCoins(minFeePerKb);
         currentNetInfo = new CoinNetInfo(SupportedCoins.INFINITE_COIN,"IFC",ifcNet,"");
@@ -72,6 +79,7 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
             //TODO main net
             networkParameters = MainNetParams.get();
             currentNetInfo.setCurrentNetDesc("主网");
+
         }
         infiniteCoinMainKit = new IfcMultiWalletAppKit(networkParameters,
                 new File(webWalletFileConfigProperties.getCoinRootPath(SupportedCoins.INFINITE_COIN)+File.separator+ifcNet)
@@ -79,9 +87,17 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
         if(networkParameters == RegTestParams.get()){
             infiniteCoinMainKit.connectToGivenHost(regHost);
         }
+        if(networkParameters == MainNetParams.get()){
+            if(loadCheckPoint){
+                log.info("enable checkpoint,load checkPoint...");
+                infiniteCoinMainKit.setCheckpoints(getClass().getClassLoader().getResourceAsStream("mainNet/checkpoints_20250118"));
+                log.info("enable checkpoint,load checkPoint done");
+            }
+        }
         // Now configure and start the appkit. This will take a second or two - we could show a temporary splash screen
         // or progress widget to keep the user engaged whilst we initialise, but we don't.
-        infiniteCoinMainKit.setDownloadListener(new DownloadListener())
+        //trade main is done,every thing is down.
+        infiniteCoinMainKit.setDownloadListener(new IFCWalletDownloadListener(SupportedCoins.INFINITE_COIN,MAIN_WALLET_NAME_PREFIX,walletBlockChainDownloadProcessEventCallback))
                 .setBlockingStartup(false)
                 .setUserAgent(MAIN_WALLET_NAME_PREFIX, "1.0")
                 .startAndWait();
@@ -278,4 +294,6 @@ public class IFCWebWallet extends BaseAbstractWebWallet {
     public String netInfo(SupportedCoins coin) {
         return supportCoin(coin)?ifcNet:null;
     }
+
+
 }

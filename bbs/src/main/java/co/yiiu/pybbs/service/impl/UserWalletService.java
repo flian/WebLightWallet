@@ -14,9 +14,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+
+import org.lotus.webwallet.base.api.WalletBlockChainDownloadProcessEventCallback;
 import org.lotus.webwallet.base.api.WalletEventListenerCallback;
 import org.lotus.webwallet.base.api.dto.*;
 import org.lotus.webwallet.base.api.enums.SupportedCoins;
+import org.lotus.webwallet.base.api.enums.WalletBlockChainDownloadProcessType;
 import org.lotus.webwallet.base.api.enums.WalletEvenType;
 import org.lotus.webwallet.base.impl.WebWalletStrategy;
 import org.springframework.beans.factory.InitializingBean;
@@ -377,6 +380,7 @@ public class UserWalletService implements IUserWalletService, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         loadWallet();
     }
+
 
     public static final class WebWalletEventListenerCallback implements WalletEventListenerCallback {
         UserWalletService userWalletService;
